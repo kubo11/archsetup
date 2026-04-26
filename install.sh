@@ -4,13 +4,14 @@ KEYMAP="pl"
 TIMEZONE="Europe/Warsaw"
 LANG="en_US.UTF-8"
 DISK="$1"
+ROOT_PASS="$2"
 EFI_PART="${DISK}1"
 SWAP_PART="${DISK}2"
 ROOT_PART="${DISK}3"
 HOSTNAME="kubopc"
 
-if [ -z "$DISK" ] ; then
-    echo "Usage: $0 /dev/DRIVE"
+if [ -z "$DISK" || -z "$ROOT_PASS" ] ; then
+    echo "Usage: $0 /dev/DRIVE ROOT_PASS"
     exit 1
 fi
 
@@ -82,8 +83,8 @@ echo \"KEYMAP=${KEYMAP}\" >> /etc/vconsole.conf
 echo \"Setting hostname...\"
 echo \"${HOSTNAME}\" >> /etc/hostname
 
-echo \"Setting password...\"
-passwd
+echo \"Setting root password...\"
+echo -e \"${ROOT_PASS}\" | passwd root
 
 echo \"Configuring boot loader...\"
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
