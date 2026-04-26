@@ -95,5 +95,8 @@ chmod 755 /mnt/root/install-chrooted.sh
 echo "Chrooting into rootfs..."
 arch-chroot /mnt /bin/sh /root/install-chrooted.sh
 
+echo "Removing install-chrooted.sh..."
+rm -rf /mnt/root/install-chrooted.sh
+
 echo "Unmounting rootfs..."
 umount -R /mnt
