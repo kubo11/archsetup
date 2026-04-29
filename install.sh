@@ -121,7 +121,7 @@ git clone https://github.com/kubo11/archsetup.git
 cd archsetup
 
 echo \"Running ansible...\"
-ansible-playbook -i localhost setup.yml
+LC_ALL="C.UTF-8" ansible-playbook -i localhost setup.yml
 
 echo \"Exiting virtual environment...\"
 deactivate
