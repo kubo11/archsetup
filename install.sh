@@ -9,6 +9,7 @@ EFI_PART="${DISK}1"
 SWAP_PART="${DISK}2"
 ROOT_PART="${DISK}3"
 HOSTNAME="kubopc"
+ROOT_WORK_DIR=/tmp/postinstall
 
 if [ -z "$DISK" || -z "$ROOT_PASS" ] ; then
     echo "Usage: $0 /dev/DRIVE ROOT_PASS"
@@ -23,14 +24,12 @@ timedatectl set-timezone "$TIMEZONE"
 timedatectl set-ntp true
 
 echo "Setting up system drive..."
-# wipefs -af "$DISK"
-
 sfdisk -w always -W always "$DISK" <<EOF
 label: gpt
 
 $EFI_PART : size=1024M, type=U
 $SWAP_PART: size=8192M, type=S
-$LVM_PART : type=L
+$ROOT_PART : type=L
 EOF
 
 partprobe "$DISK"
@@ -70,7 +69,7 @@ pacstrap -K /mnt base linux linux-firmware grub efibootmgr btrfs-progs git pytho
 echo "Generating fstab..."
 genfstab -U /mnt >> /mnt/etc/fstab
 
-echo "Writiing install-chrooted.sh to /mnt/root..."
+echo "Writing install-chrooted.sh to /mnt/root..."
 echo "#!/bin/sh
 
 echo \"Setting time & locale...\"
@@ -102,6 +101,34 @@ arch-chroot /mnt /bin/sh /root/install-chrooted.sh
 
 echo "Removing install-chrooted.sh..."
 rm -rf /mnt/root/install-chrooted.sh
+
+echo "Writing postinstall.sh to /mnt/root..."
+echo "#!/bin/sh
+
+echo \"Creating work dir...\"
+mkdir -p $ROOT_WORK_DIR
+cd $ROOT_WORK_DIR
+
+echo \"Creating virtual environment...\"
+python3 -m venv venv
+source venv/bin/activate
+
+echo \"Installing ansible...\"
+pip3 install ansible
+
+echo \"Cloning archsetup repository...\"
+git clone https://github.com/kubo11/archsetup.git
+cd archsetup
+
+echo \"Running ansible...\"
+ansible-playbook -i localhost setup.yml
+
+echo \"Exiting virtual environment...\"
+deactivate
+
+echo \"Removing postinstall.sh from /root...\"
+rm -rf /root/postinstall.sh" >/mnt/root/postinstall.sh
+chmod 755 /mnt/root/postinstall.sh
 
 echo "Unmounting rootfs..."
 umount -R /mnt

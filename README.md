@@ -7,5 +7,5 @@ curl https://raw.githubusercontent.com/kubo11/archsetup/refs/heads/main/install.
 
 Reboot, remove installation media, log in and run:
 ```
-curl https://raw.githubusercontent.com/kubo11/archsetup/refs/heads/main/postinstall.sh | /bin/sh
+/root/postinstall.sh
 ```
