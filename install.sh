@@ -65,7 +65,7 @@ mount "$EFI_PART" /mnt/boot/efi
 swapon "$SWAP_PART"
 
 echo "Installing essential software..."
-pacstrap -K /mnt base linux linux-firmware grub efibootmgr btrfs-progs git python3
+pacstrap -K /mnt base linux linux-firmware grub efibootmgr btrfs-progs git python3 curl networkmanager
 
 echo "Generating fstab..."
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -76,6 +76,7 @@ echo "#!/bin/sh
 echo \"Setting time & locale...\"
 ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 hwclock --systohc
+sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen
 locale-gen
 echo \"LANG=${LANG}\" >> /etc/locale.conf
 echo \"KEYMAP=${KEYMAP}\" >> /etc/vconsole.conf
@@ -83,8 +84,11 @@ echo \"KEYMAP=${KEYMAP}\" >> /etc/vconsole.conf
 echo \"Setting hostname...\"
 echo \"${HOSTNAME}\" >> /etc/hostname
 
+echo \"Enabling networkmanager...\"
+systemctl enable NetworkManager.service
+
 echo \"Setting root password...\"
-echo -e \"${ROOT_PASS}\" | passwd root
+echo \"${ROOT_PASS}\" | passwd root --stdin
 
 echo \"Configuring boot loader...\"
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
