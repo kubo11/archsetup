@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+set -euo pipefail
+set +x
 
 KEYMAP="pl"
 TIMEZONE="Europe/Warsaw"
@@ -16,6 +19,12 @@ USERNAME="kubo"
 
 if [ -z "$DISK" ] || [ -z "$PLAYBOOK" ] ; then
     echo "Usage: $0 /dev/DRIVE PLAYBOOK"
+    exit 1
+fi
+
+url="https://github.com/kubo11/archsetup/blob/main/ansible/${PLAYBOOK}.yml"
+if ! curl -L --fail --silent --output /dev/null "$url"; then
+    echo "Invalid playbook name: $PLAYBOOK"
     exit 1
 fi
 
@@ -77,7 +86,10 @@ echo "Generating fstab..."
 genfstab -U /mnt >> /mnt/etc/fstab
 
 echo "Writing install-chrooted.sh to /mnt/root..."
-echo "#!/bin/sh
+echo "#!/bin/bash
+
+set -euo pipefail
+set +x
 
 echo \"Setting time & locale...\"
 ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
@@ -97,7 +109,7 @@ echo \"Enabling networkmanager...\"
 systemctl enable NetworkManager.service
 
 echo \"Setting root password...\"
-echo \"${ROOT_PASS}\" | passwd root --stdin
+printf 'root:%s\n' \"$ROOT_PASS\" | chpasswd
 
 echo \"Configuring boot loader...\"
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
@@ -105,16 +117,19 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 exit" >/mnt/root/install-chrooted.sh
 chmod 755 /mnt/root/install-chrooted.sh
+unset ROOT_PASS
 
 echo "Chrooting into rootfs..."
-arch-chroot /mnt /bin/sh /root/install-chrooted.sh
+arch-chroot /mnt /bin/bash /root/install-chrooted.sh
 
 echo "Removing install-chrooted.sh..."
 rm -rf /mnt/root/install-chrooted.sh
 
 echo "Writing postinstall.sh to /mnt/root..."
-echo "#!/bin/sh
+echo "#!/bin/bash
 
+set -euo pipefail
+set +x
 
 if [[ \"\$(id -u)\" -eq 0 ]]; then
     echo \"Running root setup...\"
@@ -126,16 +141,37 @@ if [[ \"\$(id -u)\" -eq 0 ]]; then
     echo -n \"$USERNAME password: \" 
     read -s USER_PASS
     echo \"\"
-    echo \"\${USER_PASS}\" | passwd $USERNAME --stdin
+    printf '$USERNAME:%s\n' \"\$USER_PASS\" | chpasswd
+
+    echo \"Adding wheel group to sudoers...\"
+    printf '%s\n' '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/10-wheel
+    chmod 440 /etc/sudoers.d/10-wheel
+    visudo -cf /etc/sudoers.d/10-wheel
+
+    echo \"Saving $USERNAME become pass to temp file...\"
+    tmp_vars=\"\$(mktemp)\"
+    chmod 600 \"\$tmp_vars\"
+
+    printf 'ansible_become_password: \"%s\"\n' \"\$USER_PASS\" > \"\$tmp_vars\"
+
+    chown \"$USERNAME:$USERNAME\" \"\$tmp_vars\"
+    export ANSIBLE_EXTRA_VARS_FILE=\"\$tmp_vars\"
 
     echo \"Moving postinstall.sh to /home/$USERNAME...\"
     mv /root/postinstall.sh /home/$USERNAME/
 
     echo \"Switching to user $USERNAME...\"
-    exec sudo -u \"$USERNAME\" -H /home/$USERNAME/postinstall.sh \"\$@\"
+    exec sudo --preserve-env=ANSIBLE_EXTRA_VARS_FILE -u \"$USERNAME\" -H /home/$USERNAME/postinstall.sh \"\$@\"
 fi
 
 echo \"Running \$(whoami) setup...\"
+
+if [[ -z \"\${ANSIBLE_EXTRA_VARS_FILE:-}\" ]]; then
+    echo \"ANSIBLE_EXTRA_VARS_FILE is missing\"
+    exit 1
+fi
+
+trap 'rm -f \"\$ANSIBLE_EXTRA_VARS_FILE\"' EXIT
 
 echo \"Creating work dir...\"
 mkdir -p $POSTINSTALL_WORK_DIR
@@ -154,7 +190,7 @@ git clone https://github.com/kubo11/archsetup.git
 cd archsetup/ansible
 
 echo \"Running ansible...\"
-ansible-playbook $PLAYBOOK.yml --ask-become-pass
+ansible-playbook $PLAYBOOK.yml --extra-vars \"@\$ANSIBLE_EXTRA_VARS_FILE\"
 
 echo \"Exiting virtual environment...\"
 deactivate
