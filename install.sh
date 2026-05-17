@@ -6,6 +6,7 @@ LANG="en_US.UTF-8"
 LANGUAGE="en_US:en:C"
 TIME="en_DK.UTF-8"
 DISK="$1"
+PLAYBOOK="$2"
 EFI_PART="${DISK}1"
 SWAP_PART="${DISK}2"
 ROOT_PART="${DISK}3"
@@ -13,12 +14,12 @@ HOSTNAME="kubopc"
 POSTINSTALL_WORK_DIR=/tmp/postinstall
 USERNAME="kubo"
 
-if [ -z "$DISK" ] ; then
-    echo "Usage: $0 /dev/DRIVE"
+if [ -z "$DISK" ] || [ -z "$PLAYBOOK" ] ; then
+    echo "Usage: $0 /dev/DRIVE PLAYBOOK"
     exit 1
 fi
 
-echo -n "Root password: " 
+echo -n "root password: " 
 read -s ROOT_PASS
 echo ""
 
@@ -152,7 +153,7 @@ git clone https://github.com/kubo11/archsetup.git
 cd archsetup
 
 echo \"Running ansible...\"
-ansible-playbook -i localhost setup.yml
+ansible-playbook ansible/$PLAYBOOK.yml
 
 echo \"Exiting virtual environment...\"
 deactivate
