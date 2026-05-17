@@ -5,7 +5,7 @@
 
 - name: Configure pacman
   ansible.builtin.include_tasks:
-    file: pacman.yaml
+    file: pacman.yml
 
 - name: Check if yay is installed
   ansible.builtin.stat:
@@ -14,7 +14,7 @@
 
 - name: Install and configure yay
   ansible.builtin.include_tasks:
-    file: yay.yaml
+    file: yay.yml
   when: not yay_status.stat.exists
 
 - name: Run yay upgrade
