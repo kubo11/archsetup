@@ -1,0 +1,8 @@
+aur_dir: aur
+aur_path: /home/{{ username }}/{{ aur_dir }}
+
+yay_deps:
+  - git
+  - base-devel
+yay_repo: 'https://aur.archlinux.org/yay.git'
+yay_repo_dir: /tmp/yay

@@ -1,0 +1,24 @@
+- name: Create AUR directory
+  file: path={{ aur_path }}
+        state=directory
+        owner={{ username }}
+        group={{ username }}
+
+- name: Install yay dependencies
+  community.general.pacman:
+    name: '{{ item }}'
+    state: present
+  loop: '{{ yay_deps }}'
+
+- name: Clone and checkout yay repo
+  ansible.builtin.git:
+    repo: '{{ yay_repo }}'
+    dest: '{{ yay_repo_dir }}'
+    version: 'yay_version'
+
+- name: Build and install yay
+  ansible.builtin.shell: makepkg -si
+  args:
+    chdir: '{{ yay_repo }}'
+  register: command_result
+  failed_when: command_result.rc != 0

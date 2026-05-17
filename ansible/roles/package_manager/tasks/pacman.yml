@@ -1,0 +1,24 @@
+- name: Configure pacman
+  replace:
+    path: /etc/pacman.conf
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.replace }}'
+  loop:
+    - { regexp: '^#Color$', replace: 'Color' }
+    - { regexp: '^#VerbosePkgLists$', replace: 'VerbosePkgLists' }
+    - { regexp: '^#ParallelDownloads.*$', replace: 'ParallelDownloads = 8' }
+
+- name: Enable repositories
+  replace:
+    path: /etc/pacman.conf
+    regexp: '^#\[{{ item }}\]$\n^#Include\s+=\s+/etc/pacman.d/mirrorlist$'
+    replace: '[{{ item }}]\nInclude = /etc/pacman.d/mirrorlist'
+  loop: '{{ pacman_repos }}'
+  notify: Update pacman cache
+  when: pacman_repos is defined
+
+- name: Install extra pacman tools
+  community.general.pacman:
+   name: 
+    - pacman-contrib
+   state: present 

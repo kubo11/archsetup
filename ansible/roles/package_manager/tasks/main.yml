@@ -1,0 +1,21 @@
+- name: Run pacman upgrade
+  pacman: 
+    update_cache: yes
+    upgrade: yes
+
+# Configure pacman
+- include: pacman.yml
+
+- name: Check if yay is installed
+  ansible.builtin.stat:
+    path: /usr/bin/yay
+  register: yay_status
+
+# Install and configure yay
+- include: yay.yml
+  when: not yay_status.stat.exists
+
+- name: Run yay upgrade
+  ansible.builtin.shell: yay
+  register: command_result
+  failed_when: command_result.rc != 0

@@ -1,0 +1,4 @@
+- hosts: workstation
+  roles:
+    - role: package_manager
+      become: true
