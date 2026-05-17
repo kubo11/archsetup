@@ -150,10 +150,11 @@ pip3 install ansible
 
 echo \"Cloning archsetup repository...\"
 git clone https://github.com/kubo11/archsetup.git
-cd archsetup
+
+cd archsetup/ansible
 
 echo \"Running ansible...\"
-ansible-playbook ansible/$PLAYBOOK.yml
+ansible-playbook $PLAYBOOK.yml --ask-become-pass
 
 echo \"Exiting virtual environment...\"
 deactivate

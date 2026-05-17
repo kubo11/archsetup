@@ -3,16 +3,18 @@
     update_cache: yes
     upgrade: yes
 
-# Configure pacman
-- include: pacman.yml
+- name: Configure pacman
+  ansible.builtin.include_tasks:
+    file: pacman.yaml
 
 - name: Check if yay is installed
   ansible.builtin.stat:
     path: /usr/bin/yay
   register: yay_status
 
-# Install and configure yay
-- include: yay.yml
+- name: Install and configure yay
+  ansible.builtin.include_tasks:
+    file: yay.yaml
   when: not yay_status.stat.exists
 
 - name: Run yay upgrade
