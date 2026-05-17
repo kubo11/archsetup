@@ -3,6 +3,8 @@
 KEYMAP="pl"
 TIMEZONE="Europe/Warsaw"
 LANG="en_US.UTF-8"
+LANGUAGE="en_US:en:C"
+TIME="en_DK.UTF-8"
 DISK="$1"
 ROOT_PASS="$2"
 EFI_PART="${DISK}1"
@@ -75,9 +77,12 @@ echo "#!/bin/sh
 echo \"Setting time & locale...\"
 ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 hwclock --systohc
-sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen
+sed -i '/${LANG}/s/^# //g' /etc/locale.gen
+sed -i '/${TIME}/s/^# //g' /etc/locale.gen
 locale-gen
 echo \"LANG=${LANG}\" >> /etc/locale.conf
+echo \"LANGUAGE=${LANGUAGE}\" >> /etc/locale.conf
+echo \"LC_TIME=${TIME}\" >> /etc/locale.conf
 echo \"KEYMAP=${KEYMAP}\" >> /etc/vconsole.conf
 
 echo \"Setting hostname...\"
