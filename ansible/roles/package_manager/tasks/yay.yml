@@ -17,7 +17,7 @@
   become: false
 
 - name: Build and install yay
-  ansible.builtin.shell: makepkg -si
+  ansible.builtin.shell: makepkg -si --noconfirm
   args:
     chdir: '{{ yay_repo_dir }}'
   register: command_result

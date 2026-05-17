@@ -143,8 +143,8 @@ if [[ \"\$(id -u)\" -eq 0 ]]; then
     echo \"\"
     printf '$USERNAME:%s\n' \"\$USER_PASS\" | chpasswd
 
-    echo \"Adding wheel group to sudoers...\"
-    printf '%s\n' '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/10-wheel
+    echo \"Adding wheel group to sudoers (passwordless)...\"
+    printf '%s\n' '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-wheel
     chmod 440 /etc/sudoers.d/10-wheel
     visudo -cf /etc/sudoers.d/10-wheel
 
@@ -194,6 +194,11 @@ ansible-playbook $PLAYBOOK.yml --extra-vars \"@\$ANSIBLE_EXTRA_VARS_FILE\"
 
 echo \"Exiting virtual environment...\"
 deactivate
+
+echo \"Changing sudo to passworded...\"
+sudo printf '%s\n' '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/10-wheel
+sudo chmod 440 /etc/sudoers.d/10-wheel
+sudo visudo -cf /etc/sudoers.d/10-wheel
 
 echo \"Removing postinstall.sh from /home/$USERNAME...\"
 rm -rf /home/$USERNAME/postinstall.sh" >/mnt/root/postinstall.sh
