@@ -14,11 +14,12 @@
   ansible.builtin.git:
     repo: '{{ yay_repo }}'
     dest: '{{ yay_repo_dir }}'
-    version: 'yay_version'
+  become: false
 
 - name: Build and install yay
   ansible.builtin.shell: makepkg -si
   args:
-    chdir: '{{ yay_repo }}'
+    chdir: '{{ yay_repo_dir }}'
   register: command_result
+  become: false
   failed_when: command_result.rc != 0

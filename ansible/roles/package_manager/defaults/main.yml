@@ -4,5 +4,6 @@ aur_path: /home/{{ username }}/{{ aur_dir }}
 yay_deps:
   - git
   - base-devel
+  - extra/go
 yay_repo: 'https://aur.archlinux.org/yay.git'
 yay_repo_dir: /tmp/yay

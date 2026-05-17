@@ -6,7 +6,7 @@
   loop:
     - { regexp: '^#Color$', replace: 'Color' }
     - { regexp: '^#VerbosePkgLists$', replace: 'VerbosePkgLists' }
-    - { regexp: '^#ParallelDownloads.*$', replace: 'ParallelDownloads = 8' }
+    - { regexp: '^ParallelDownloads = 5$', replace: 'ParallelDownloads = 8' }
 
 - name: Enable repositories
   replace:
