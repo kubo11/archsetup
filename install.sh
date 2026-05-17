@@ -12,6 +12,7 @@ SWAP_PART="${DISK}2"
 ROOT_PART="${DISK}3"
 HOSTNAME="kubopc"
 ROOT_WORK_DIR=/tmp/postinstall
+USERNAME="kubo"
 
 if [ -z "$DISK" || -z "$ROOT_PASS" ] ; then
     echo "Usage: $0 /dev/DRIVE ROOT_PASS"
@@ -109,6 +110,9 @@ rm -rf /mnt/root/install-chrooted.sh
 
 echo "Writing postinstall.sh to /mnt/root..."
 echo "#!/bin/sh
+
+echo \"Adding user...\"
+useradd -m -G wheel $USERNAME
 
 echo \"Creating work dir...\"
 mkdir -p $ROOT_WORK_DIR
