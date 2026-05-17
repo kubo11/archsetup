@@ -6,18 +6,21 @@ LANG="en_US.UTF-8"
 LANGUAGE="en_US:en:C"
 TIME="en_DK.UTF-8"
 DISK="$1"
-ROOT_PASS="$2"
 EFI_PART="${DISK}1"
 SWAP_PART="${DISK}2"
 ROOT_PART="${DISK}3"
 HOSTNAME="kubopc"
-ROOT_WORK_DIR=/tmp/postinstall
+POSTINSTALL_WORK_DIR=/tmp/postinstall
 USERNAME="kubo"
 
-if [ -z "$DISK" || -z "$ROOT_PASS" ] ; then
-    echo "Usage: $0 /dev/DRIVE ROOT_PASS"
+if [ -z "$DISK" ] ; then
+    echo "Usage: $0 /dev/DRIVE"
     exit 1
 fi
+
+echo -n "Root password: " 
+read -s ROOT_PASS
+echo ""
 
 echo "Setting up keymap..."
 loadkeys "$KEYMAP"
@@ -67,7 +70,7 @@ mount "$EFI_PART" /mnt/boot/efi
 swapon "$SWAP_PART"
 
 echo "Installing essential software..."
-pacstrap -K /mnt base linux linux-firmware grub efibootmgr btrfs-progs git python3 curl networkmanager
+pacstrap -K /mnt base linux linux-firmware grub efibootmgr btrfs-progs git python3 networkmanager sudo
 
 echo "Generating fstab..."
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -78,8 +81,8 @@ echo "#!/bin/sh
 echo \"Setting time & locale...\"
 ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 hwclock --systohc
-sed -i '/${LANG}/s/^# //g' /etc/locale.gen
-sed -i '/${TIME}/s/^# //g' /etc/locale.gen
+sed -i '/${LANG} UTF-8/s/^#//g' /etc/locale.gen
+sed -i '/${TIME} UTF-8/s/^#//g' /etc/locale.gen
 locale-gen
 echo \"LANG=${LANG}\" >> /etc/locale.conf
 echo \"LANGUAGE=${LANGUAGE}\" >> /etc/locale.conf
@@ -97,7 +100,7 @@ echo \"${ROOT_PASS}\" | passwd root --stdin
 
 echo \"Configuring boot loader...\"
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
-grub-mkconfig -o /boot/grub/grub.cfg
+grub-mkconfig -o /boot/grub/grub.cfg    
 
 exit" >/mnt/root/install-chrooted.sh
 chmod 755 /mnt/root/install-chrooted.sh
@@ -111,12 +114,31 @@ rm -rf /mnt/root/install-chrooted.sh
 echo "Writing postinstall.sh to /mnt/root..."
 echo "#!/bin/sh
 
-echo \"Adding user...\"
-useradd -m -G wheel $USERNAME
+
+if [[ \"\$(id -u)\" -eq 0 ]]; then
+    echo \"Running root setup...\"
+
+    echo \"Adding user $USERNAME...\"
+    useradd -m -G wheel -s /bin/bash \"$USERNAME\" 2>/dev/null || true
+
+    echo \"Setting user $USERNAME password...\"
+    echo -n \"$USERNAME password: \" 
+    read -s USER_PASS
+    echo \"\"
+    echo \"\${USER_PASS}\" | passwd $USERNAME --stdin
+
+    echo \"Moving postinstall.sh to /home/$USERNAME...\"
+    mv /root/postinstall.sh /home/$USERNAME/
+
+    echo \"Switching to user $USERNAME...\"
+    exec sudo -u \"$USERNAME\" -H /home/$USERNAME/postinstall.sh \"\$@\"
+fi
+
+echo \"Running \$(whoami) setup...\"
 
 echo \"Creating work dir...\"
-mkdir -p $ROOT_WORK_DIR
-cd $ROOT_WORK_DIR
+mkdir -p $POSTINSTALL_WORK_DIR
+cd $POSTINSTALL_WORK_DIR
 
 echo \"Creating virtual environment...\"
 python3 -m venv venv
@@ -130,13 +152,13 @@ git clone https://github.com/kubo11/archsetup.git
 cd archsetup
 
 echo \"Running ansible...\"
-LC_ALL="C.UTF-8" ansible-playbook -i localhost setup.yml
+ansible-playbook -i localhost setup.yml
 
 echo \"Exiting virtual environment...\"
 deactivate
 
-echo \"Removing postinstall.sh from /root...\"
-rm -rf /root/postinstall.sh" >/mnt/root/postinstall.sh
+echo \"Removing postinstall.sh from /home/$USERNAME...\"
+rm -rf /home/$USERNAME/postinstall.sh" >/mnt/root/postinstall.sh
 chmod 755 /mnt/root/postinstall.sh
 
 echo "Unmounting rootfs..."
