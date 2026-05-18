@@ -131,77 +131,77 @@ echo "#!/bin/bash
 set -euo pipefail
 set +x
 
-if [[ \"\$(id -u)\" -eq 0 ]]; then
-    echo \"Running root setup...\"
+as_user() {
+    echo \"Running \$(whoami) setup...\"
 
-    echo \"Adding user $USERNAME...\"
-    useradd -m -G wheel -s /bin/bash \"$USERNAME\" 2>/dev/null || true
+    if [[ -z \"\${ANSIBLE_EXTRA_VARS_FILE:-}\" ]]; then
+        echo \"ANSIBLE_EXTRA_VARS_FILE is missing\"
+        exit 1
+    fi
 
-    echo \"Setting user $USERNAME password...\"
-    echo -n \"$USERNAME password: \" 
-    read -s USER_PASS
-    echo \"\"
-    printf '$USERNAME:%s\n' \"\$USER_PASS\" | chpasswd
+    trap 'rm -f \"\$ANSIBLE_EXTRA_VARS_FILE\"' EXIT
 
-    echo \"Adding wheel group to sudoers (passwordless)...\"
-    printf '%s\n' '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-wheel
-    chmod 440 /etc/sudoers.d/10-wheel
-    visudo -cf /etc/sudoers.d/10-wheel
+    echo \"Creating work dir...\"
+    mkdir -p $POSTINSTALL_WORK_DIR
+    cd $POSTINSTALL_WORK_DIR
 
-    echo \"Saving $USERNAME become pass to temp file...\"
-    tmp_vars=\"\$(mktemp)\"
-    chmod 600 \"\$tmp_vars\"
+    echo \"Creating virtual environment...\"
+    python3 -m venv venv
+    source venv/bin/activate
 
-    printf 'ansible_become_password: \"%s\"\n' \"\$USER_PASS\" > \"\$tmp_vars\"
+    echo \"Installing ansible...\"
+    pip3 install ansible
 
-    chown \"$USERNAME:$USERNAME\" \"\$tmp_vars\"
-    export ANSIBLE_EXTRA_VARS_FILE=\"\$tmp_vars\"
+    echo \"Cloning archsetup repository...\"
+    git clone https://github.com/kubo11/archsetup.git
 
-    echo \"Moving postinstall.sh to /home/$USERNAME...\"
-    mv /root/postinstall.sh /home/$USERNAME/
+    cd archsetup/ansible
 
-    echo \"Switching to user $USERNAME...\"
-    exec sudo --preserve-env=ANSIBLE_EXTRA_VARS_FILE -u \"$USERNAME\" -H /home/$USERNAME/postinstall.sh \"\$@\"
-fi
+    echo \"Running ansible...\"
+    ansible-playbook $PLAYBOOK.yml --extra-vars \"@\$ANSIBLE_EXTRA_VARS_FILE\"
 
-echo \"Running \$(whoami) setup...\"
+    echo \"Exiting virtual environment...\"
+    deactivate
+}
 
-if [[ -z \"\${ANSIBLE_EXTRA_VARS_FILE:-}\" ]]; then
-    echo \"ANSIBLE_EXTRA_VARS_FILE is missing\"
-    exit 1
-fi
+echo \"Running root setup...\"
 
-trap 'rm -f \"\$ANSIBLE_EXTRA_VARS_FILE\"' EXIT
+echo \"Adding user $USERNAME...\"
+useradd -m -G wheel -s /bin/bash \"$USERNAME\" 2>/dev/null || true
 
-echo \"Creating work dir...\"
-mkdir -p $POSTINSTALL_WORK_DIR
-cd $POSTINSTALL_WORK_DIR
+echo \"Setting user $USERNAME password...\"
+echo -n \"$USERNAME password: \" 
+read -s USER_PASS
+echo \"\"
+printf '$USERNAME:%s\n' \"\$USER_PASS\" | chpasswd
 
-echo \"Creating virtual environment...\"
-python3 -m venv venv
-source venv/bin/activate
+echo \"Adding wheel group to sudoers (passwordless)...\"
+printf '%s\n' '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-wheel
+chmod 440 /etc/sudoers.d/10-wheel
+visudo -cf /etc/sudoers.d/10-wheel
 
-echo \"Installing ansible...\"
-pip3 install ansible
+echo \"Saving $USERNAME become pass to temp file...\"
+tmp_vars=\"\$(mktemp)\"
+chmod 600 \"\$tmp_vars\"
 
-echo \"Cloning archsetup repository...\"
-git clone https://github.com/kubo11/archsetup.git
+printf 'ansible_become_password: \"%s\"\n' \"\$USER_PASS\" > \"\$tmp_vars\"
 
-cd archsetup/ansible
+chown \"$USERNAME:$USERNAME\" \"\$tmp_vars\"
 
-echo \"Running ansible...\"
-ansible-playbook $PLAYBOOK.yml --extra-vars \"@\$ANSIBLE_EXTRA_VARS_FILE\"
+echo \"Switching to user $USERNAME...\"
+export -f as_user
+ANSIBLE_EXTRA_VARS_FILE=\"\$tmp_vars\" runuser -u "$USERNAME" -- bash -c 'as_user'
 
-echo \"Exiting virtual environment...\"
-deactivate
+echo \"Switching back to root...\"
 
 echo \"Changing sudo to passworded...\"
-sudo printf '%s\n' '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/10-wheel
-sudo chmod 440 /etc/sudoers.d/10-wheel
-sudo visudo -cf /etc/sudoers.d/10-wheel
+rm -f /etc/sudoers.d/10-wheel
+printf '%s\n' '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/10-wheel
+chmod 440 /etc/sudoers.d/10-wheel
+visudo -cf /etc/sudoers.d/10-wheel
 
-echo \"Removing postinstall.sh from /home/$USERNAME...\"
-rm -rf /home/$USERNAME/postinstall.sh" >/mnt/root/postinstall.sh
+echo \"Removing postinstall.sh from /root...\"
+rm -rf /root/postinstall.sh" >/mnt/root/postinstall.sh
 chmod 755 /mnt/root/postinstall.sh
 
 echo "Unmounting rootfs..."
