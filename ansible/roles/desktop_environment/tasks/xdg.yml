@@ -1,0 +1,23 @@
+- name: Install XDG Desktop Portal
+  community.general.pacman:
+   name:
+    - xdg-desktop-portal-hyprland
+    - xdg-desktop-portal-gtk
+   state: present
+
+- name: Use GTK file picker
+  ansible.builtin.copy:
+    dest: "{{ user_config_dir }}/xdg-desktop-portal/hyprland-portals.conf"
+    content: |
+      [preferred]
+      default = hyprland;gtk
+      org.freedesktop.impl.portal.FileChooser = kde
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'
+
+- name: Setup XDG user dirs
+  community.general.pacman:
+   name:
+    - xdg-user-dirs
+   state: present

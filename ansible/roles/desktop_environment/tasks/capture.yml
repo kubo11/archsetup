@@ -1,0 +1,13 @@
+- name: Install screenshot utilties
+  community.general.pacman:
+   name: 
+    - grim
+    - slurp
+    - swappy
+   state: present
+
+- name: Install screencast utility
+  ansible.builtin.include_tasks: tasks/yay_package.yml
+  vars:
+    yay_packages:
+      - wl-screenrec

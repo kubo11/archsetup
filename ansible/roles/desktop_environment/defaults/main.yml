@@ -1,0 +1,6 @@
+hyprland_config_dir: "{{ user_config_dir }}/hypr"
+hyprland_config_path: "{{ hyprland_config_dir }}/hyprland.lua"
+font: "Hack"
+greetd_config_dir: /etc/greetd
+greetd_config_path: "{{ greetd_config_dir }}/config.toml"
+greetd_hyprland_path: "{{ greetd_config_dir }}/hyprland.lua"

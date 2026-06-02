@@ -1,0 +1,41 @@
+
+- name: Install audio controlling utilities
+  community.general.pacman:
+   name: 
+    - playerctl
+    - wpctl
+   state: present
+
+- name: Unmute alsa
+  ansible.builtin.shell: |
+    amixer sset Master unmute
+    amixer sset Speaker unmute
+    amixer sset Headphone unmute
+
+- name: Install image editors
+  community.general.pacman:
+   name:
+    - gimp
+    - inkscape
+   state: present
+
+- name: Install image editors
+  community.general.pacman:
+   name:
+    - gimp
+    - inkscape
+    - imagemagick
+   state: present
+
+- name: Install audio editors
+  community.general.pacman:
+   name:
+    - audacity
+   state: present
+
+- name: Install video software
+  community.general.pacman:
+   name:
+    - ffmpeg
+    - mpv
+   state: present

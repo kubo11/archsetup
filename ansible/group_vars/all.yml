@@ -1,2 +1,3 @@
 # User info
 username: kubo
+user_config_dir: "/home/{{ username }}/.config"

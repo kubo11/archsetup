@@ -1,0 +1,31 @@
+- name: Install display manager and greeter
+  community.general.pacman:
+   name:
+    - dbus
+    - accountservice
+    - greetd
+    - greetd-regreet
+   state: present
+
+- name: Enable greetd service
+  become: true
+  ansible.builtin.systemd:
+    name: greetd.service
+    enabled: true
+    state: started
+
+- name: Generate greetd config from template
+  ansible.builtin.template:
+    src: greetd-config.toml.j2
+    dest: "{{ greetd_config_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Generate greetd-hyprland config from template
+  ansible.builtin.template:
+    src: greetd-hyprland.lua.j2
+    dest: "{{ greetd_hyprland_path }}"
+    owner: root
+    group: root
+    mode: '0644'

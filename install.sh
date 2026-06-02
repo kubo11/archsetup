@@ -80,7 +80,7 @@ mount "$EFI_PART" /mnt/boot/efi
 swapon "$SWAP_PART"
 
 echo "Installing essential software..."
-pacstrap -K /mnt base linux linux-firmware grub efibootmgr btrfs-progs git python3 networkmanager sudo
+pacstrap -K /mnt base linux linux-firmware linux-headers grub efibootmgr btrfs-progs git python3 networkmanager sudo
 
 echo "Generating fstab..."
 genfstab -U /mnt >> /mnt/etc/fstab

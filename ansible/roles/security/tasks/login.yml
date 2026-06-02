@@ -1,0 +1,20 @@
+- name: Enforce 4s delay after failed login
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/system-login
+    line: "auth optional pam_faildelay.so delay=4000000"
+    insertbefore: BOF
+    state: present
+    backup: true
+
+- name: Add access rules to /etc/security/access.conf
+  become: true
+  ansible.builtin.blockinfile:
+    path: /etc/security/access.conf
+    backup: true
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - access rules"
+    block: |
+      + : root : LOCAL
+      + : wheel : LOCAL
+      + : {{ username }} : ALL
+      - : ALL : ALL

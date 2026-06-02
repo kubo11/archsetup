@@ -1,0 +1,21 @@
+- name: Strengthen password requirements
+  ansible.builtin.include_tasks:
+    file: passwords.yml
+
+- name: Restrict login options
+  ansible.builtin.include_tasks:
+    file: login.yml
+
+- name: Patch CPU microcode
+  ansible.builtin.include_tasks:
+    file: passwords.yml
+
+- name: Setup Yubikey
+  ansible.builtin.include_tasks:
+    file: yubikey.yml
+
+- name: Install vulnerability checking utility
+  community.general.pacman:
+   name: 
+    - arch-audit
+   state: present 

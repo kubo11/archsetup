@@ -1,0 +1,13 @@
+- name: Install Pipewire
+  community.general.pacman:
+   name: 
+    - pipewire
+    - wireplumber
+    - pipewire-pulse
+   state: present
+
+- name: Install audio config app
+  community.general.pacman:
+   name: 
+    - pavucontrol
+   state: present

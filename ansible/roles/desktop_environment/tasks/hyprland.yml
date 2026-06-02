@@ -1,0 +1,13 @@
+- name: Install Hyprland
+  community.general.pacman:
+   name: 
+    - hyprland
+   state: present
+
+- name: Generate hyprland config from template
+  ansible.builtin.template:
+    src: hyprland.conf.j2
+    dest: "{{ hyprland_config_path }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0644'

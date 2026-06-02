@@ -1,0 +1,5 @@
+- name: Install terminal emulator
+  community.general.pacman:
+   name: 
+    - ghostty
+   state: present

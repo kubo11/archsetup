@@ -1,0 +1,22 @@
+- name: Install fonts packages
+  community.general.pacman:
+   name:
+    - kbd
+    - noto-fonts
+    - nerd-fonts
+   state: present
+
+- name: Set Hack Nerd Font for current console session
+  ansible.builtin.command:
+    cmd: "setfont {{ font }}"
+  changed_when: true
+
+- name: Persist console font in /etc/vconsole.conf
+  ansible.builtin.lineinfile:
+    path: /etc/vconsole.conf
+    regexp: '^FONT='
+    line: "FONT={{ font }}"
+    create: true
+    owner: root
+    group: root
+    mode: "0644"

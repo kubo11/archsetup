@@ -1,0 +1,16 @@
+- name: Install intel-ucode
+  community.general.pacman:
+    name: intel-ucode
+    state: present
+
+- name: Add microcode hook after autodetect in mkinitcpio.conf
+  ansible.builtin.replace:
+    path: /etc/mkinitcpio.conf
+    backup: true
+    regexp: '^(HOOKS=\([^)]*\bautodetect\b)(?![^)]*\bmicrocode\b)([^)]*\))$'
+    replace: '\1 microcode\2'
+  register: mkinitcpio_microcode
+
+- name: Regenerate initramfs after mkinitcpio hook change
+  ansible.builtin.command: mkinitcpio -P
+  when: mkinitcpio_microcode is changed

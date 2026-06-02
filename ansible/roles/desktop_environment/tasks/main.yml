@@ -1,0 +1,84 @@
+- name: Install Nvidia drivers and utilities
+  community.general.pacman:
+   name: 
+    - nvidia-open-dkms
+    - nvidia-utils
+    - lib32-nvidia-utils
+    - egl-wayland
+   state: present 
+  
+- name: Install status bar
+  community.general.pacman:
+   name: 
+    - waybar
+   state: present
+
+- name: Install wallpaper utility
+  community.general.pacman:
+   name: 
+    - hyprpaper
+   state: present
+
+- name: Install app launcher
+  community.general.pacman:
+   name: 
+    - rofi
+   state: present
+
+- name: Install color picker
+  community.general.pacman:
+   name: 
+    - hyprpicker
+   state: present
+
+- name: Install notification daemon
+  community.general.pacman:
+   name: 
+    - dunst
+   state: present
+
+- name: Install authentication daemon
+  community.general.pacman:
+   name: 
+    - hypr-polkit-agent
+   state: present
+
+- name: Install device mounting utility
+  community.general.pacman:
+   name: 
+    - udiskie
+   state: present
+
+- name: Install brightness controlling utility
+  community.general.pacman:
+   name: 
+    - brightnessctl
+   state: present
+
+- name: Install and setup XDG
+  ansible.builtin.include_tasks:
+    file: xdg.yml
+
+- name: Install and setup fonts
+  ansible.builtin.include_tasks:
+    file: fonts.yml
+
+- name: Install and setup themes
+  ansible.builtin.include_tasks:
+    file: themes.yml
+
+- name: Setup clipboard
+  ansible.builtin.include_tasks:
+    file: clipboard.yml
+
+- name: Install and setup capture utilities
+  ansible.builtin.include_tasks:
+    file: capture.yml
+
+- name: Install and setup display manager
+  ansible.builtin.include_tasks:
+    file: login.yml
+
+- name: Install and setup Hyprland
+  ansible.builtin.include_tasks:
+    file: hyprland.yml

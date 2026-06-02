@@ -1,0 +1,21 @@
+- name: Ensure getty@tty1 override directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/getty@tty1.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Preserve boot messages on tty1
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/getty@tty1.service.d/noclear.conf
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      [Service]
+      TTYVTDisallocate=no
+  become: true
+  notify: Reload systemd
+

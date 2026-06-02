@@ -1,0 +1,15 @@
+- name: Remove quiet from GRUB_CMDLINE_LINUX_DEFAULT
+  ansible.builtin.replace:
+    path: /etc/default/grub
+    regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*)\bquiet\b\s*([^"]*")$'
+    replace: '\1\2'
+  become: true
+  notify: Regenerate grub config
+
+- name: Normalize extra spaces in GRUB_CMDLINE_LINUX_DEFAULT
+  ansible.builtin.replace:
+    path: /etc/default/grub
+    regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*)\s{2,}([^"]*")$'
+    replace: '\1 \2'
+  become: true
+  notify: Regenerate grub config

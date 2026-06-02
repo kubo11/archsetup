@@ -1,0 +1,14 @@
+- name: Check installed packages
+  ansible.builtin.command:
+    cmd: pacman -Q {{ item }}
+  loop: "{{ yay_packages }}"
+  register: yay_package_checks
+  failed_when: false
+  changed_when: false
+
+- name: Install missing packages with yay
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm {{ item.item }}
+  loop: "{{ yay_package_checks.results }}"
+  when: item.rc != 0
+  become: false
