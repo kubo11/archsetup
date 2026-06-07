@@ -1,0 +1,2 @@
+fish_config_dir: "{{ user_config_dir }}/fish"
+fish_config_path: "{{ fish_config_dir }}/config.fish"

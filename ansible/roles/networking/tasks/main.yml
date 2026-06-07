@@ -1,0 +1,24 @@
+- name: Install network manager frontend
+  community.general.pacman:
+   name:
+    - networkmanager-dmenu
+   state: present
+
+- name: Install firewall
+  community.general.pacman:
+   name:
+    - nftables
+    - ufw
+   state: present
+
+- name: Enable ufw service
+  become: true
+  ansible.builtin.systemd:
+    name: ufw.service
+    enabled: true
+    state: started
+
+- name: Deny everything and enable UFW
+  community.general.ufw:
+    state: enabled
+    policy: deny

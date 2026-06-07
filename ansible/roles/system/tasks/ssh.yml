@@ -1,0 +1,5 @@
+- name: Install ssh tool
+  community.general.pacman:
+   name:
+    - openssh
+   state: present

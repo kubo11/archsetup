@@ -1,0 +1,11 @@
+- name: Install and setup core utilities
+  ansible.builtin.include_tasks:
+    file: core.yml
+
+- name: Install and setup compression utilities
+  ansible.builtin.include_tasks:
+    file: compression.yml
+
+- name: Install and setup ssh
+  ansible.builtin.include_tasks:
+    file: ssh.yml

@@ -1,0 +1,27 @@
+- name: Ensure group "plugdev" exists
+  ansible.builtin.group:
+    name: plugdev
+    state: present
+
+- name: Add user to "plugdev" group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: plugdev
+    append: true
+
+- name: Install mouse control software
+  community.general.pacman:
+   name: 
+    - solaar
+   state: present
+
+- name: Reload udev rules
+  ansible.builtin.shell: udevadm control --reload-rules
+  register: command_result
+  failed_when: command_result.rc != 0
+
+- name: Install webcam control software
+  community.general.pacman:
+   name: 
+    - v4l-utils
+   state: present

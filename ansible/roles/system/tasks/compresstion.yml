@@ -1,0 +1,22 @@
+- name: Install compression only tools
+  community.general.pacman:
+   name:
+    - bzip2
+    - gzip
+    - xz
+    - zstd
+   state: present
+
+- name: Install archiving only tools
+  community.general.pacman:
+   name:
+    - terminal
+   state: present
+
+- name: Install archiving and compression tools
+  community.general.pacman:
+   name:
+    - 7zip
+    - zip
+    - unzip
+   state: present
