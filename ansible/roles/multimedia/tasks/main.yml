@@ -6,14 +6,12 @@
   community.general.pacman:
    name: 
     - playerctl
-    - wpctl
+    - alsa-utils
    state: present
 
 - name: Unmute alsa
   ansible.builtin.shell: |
     amixer sset Master unmute
-    amixer sset Speaker unmute
-    amixer sset Headphone unmute
 
 - name: Install image editors
   community.general.pacman:

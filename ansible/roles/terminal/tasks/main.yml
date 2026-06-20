@@ -15,6 +15,12 @@
     name: "{{ username }}"
     shell: /usr/bin/fish
 
+- name: Ensure fish config directory exists
+  file: path={{ fish_config_dir }}
+        state=directory
+        owner={{ username }}
+        group={{ username }}
+
 - name: Generate shell config from template
   ansible.builtin.template:
     src: config.fish.j2

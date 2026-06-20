@@ -40,7 +40,7 @@ hl.on("hyprland.start", function ()
   hl.exec_cmd("systemctl --user start hyprpolkitagent")
   hl.exec_cmd(statusBar)
   hl.exec_cmd(wallpaper)
-  hl.exec_cmd("wl-paste --watch clipvault store")
+  hl.exec_cmd("wl-paste --watch cliphist store")
   hl.exec_cmd(udiskie)
 end)
 
@@ -81,7 +81,7 @@ hl.config({
 })
 
 hl.permission("/usr/(bin|local/bin)/grim", "screencopy", "allow")
-hl.permission("/usr/(bin|local/bin)/wl-screenrec", "screencopy", "allow")
+hl.permission("/usr/(bin|local/bin)/wf-recorder", "screencopy", "allow")
 hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencopy", "allow")
 hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")
 
@@ -251,7 +251,7 @@ hl.bind(mainMod .. " + C", hl.dsp.window.close())
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("clipvault list | " .. menu .. " -dmenu -display-columns 2 | clipvault get | wl-copy"))
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("cliphist list | " .. menu .. " -dmenu -display-columns 2 | cliphist decode | wl-copy"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 
 -- Screenshot
@@ -260,8 +260,8 @@ hl.bind("ALT + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | swappy -f -')
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp -d)" - | wl-copy'))  -- copy selected area
 
 -- Screencast
-hl.bind("ALT + SHIFT + D", hl.dsp.exec_cmd('wl-screenrec -g "$(slurp)" -f ~/Videos/screencast-$(date +%FT%T%:z).mp4'))   -- selected area
-hl.bind("SUPER + SHIFT + D", hl.dsp.exec_cmd('wl-screenrec -f ~/Videos/screencast-$(date +%FT%T%:z).mp4'))               -- fullscreen
+hl.bind("ALT + SHIFT + D", hl.dsp.exec_cmd('wf-recorder -g "$(slurp)" -f ~/Videos/screencast-$(date +%FT%T%:z).mp4'))   -- selected area
+hl.bind("SUPER + SHIFT + D", hl.dsp.exec_cmd('wf-recorder -f ~/Videos/screencast-$(date +%FT%T%:z).mp4'))               -- fullscreen
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

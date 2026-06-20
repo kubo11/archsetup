@@ -10,7 +10,7 @@
 - name: Install archiving only tools
   community.general.pacman:
    name:
-    - terminal
+    - tar
    state: present
 
 - name: Install archiving and compression tools

@@ -6,7 +6,7 @@
     - nerd-fonts
    state: present
 
-- name: Set Hack Nerd Font for current console session
+- name: Set font for current console session
   ansible.builtin.command:
     cmd: "setfont {{ font }}"
   changed_when: true

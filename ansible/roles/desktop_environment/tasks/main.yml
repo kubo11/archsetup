@@ -3,9 +3,9 @@
    name: 
     - nvidia-open-dkms
     - nvidia-utils
-    - lib32-nvidia-utils
+#    - lib32-nvidia-utils
     - egl-wayland
-   state: present 
+   state: present
   
 - name: Install status bar
   community.general.pacman:
@@ -40,7 +40,7 @@
 - name: Install authentication daemon
   community.general.pacman:
    name: 
-    - hypr-polkit-agent
+    - hyprpolkitagent
    state: present
 
 - name: Install device mounting utility
@@ -75,10 +75,10 @@
   ansible.builtin.include_tasks:
     file: capture.yml
 
-- name: Install and setup display manager
-  ansible.builtin.include_tasks:
-    file: login.yml
-
 - name: Install and setup Hyprland
   ansible.builtin.include_tasks:
     file: hyprland.yml
+
+- name: Install and setup display manager
+  ansible.builtin.include_tasks:
+    file: login.yml

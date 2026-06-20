@@ -5,6 +5,12 @@
     - xdg-desktop-portal-gtk
    state: present
 
+- name: Ensure xdg desktop portal config directory exists
+  file: path={{ user_config_dir }}/xdg-desktop-portal
+        state=directory
+        owner={{ username }}
+        group={{ username }}
+
 - name: Use GTK file picker
   ansible.builtin.copy:
     dest: "{{ user_config_dir }}/xdg-desktop-portal/hyprland-portals.conf"

@@ -2,17 +2,10 @@
   community.general.pacman:
    name:
     - dbus
-    - accountservice
+    - accountsservice
     - greetd
     - greetd-regreet
    state: present
-
-- name: Enable greetd service
-  become: true
-  ansible.builtin.systemd:
-    name: greetd.service
-    enabled: true
-    state: started
 
 - name: Generate greetd config from template
   ansible.builtin.template:
@@ -29,3 +22,10 @@
     owner: root
     group: root
     mode: '0644'
+
+- name: Enable greetd service
+  become: true
+  ansible.builtin.systemd:
+    name: greetd.service
+    enabled: true
+    state: started

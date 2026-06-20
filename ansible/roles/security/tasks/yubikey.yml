@@ -21,4 +21,4 @@
   ansible.builtin.include_tasks: tasks/yay_package.yml
   vars:
     yay_packages:
-      - google-chrome
+      - yubico-authenticator
