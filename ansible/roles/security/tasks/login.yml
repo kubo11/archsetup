@@ -17,4 +17,5 @@
       + : root : LOCAL
       + : wheel : LOCAL
       + : {{ username }} : ALL
+      + : greeter : greetd
       - : ALL : ALL

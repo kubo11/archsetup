@@ -4,7 +4,6 @@
     - grim
     - slurp
     - swappy
-    - wf-recorder
    state: present
 
 - name: Install screencast utility

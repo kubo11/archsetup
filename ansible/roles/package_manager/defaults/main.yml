@@ -5,5 +5,10 @@ yay_deps:
   - git
   - base-devel
   - extra/go
+  - python-build
+  - python-setuptools
+  - python-wheel
+  - python-installer
+  - python-poetry-core
 yay_repo: 'https://aur.archlinux.org/yay.git'
 yay_repo_dir: /tmp/yay
