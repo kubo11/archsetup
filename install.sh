@@ -10,9 +10,9 @@ LANGUAGE="en_US:en:C"
 TIME="en_DK.UTF-8"
 DISK="$1"
 PLAYBOOK="$2"
-EFI_PART="${DISK}1"
-SWAP_PART="${DISK}2"
-ROOT_PART="${DISK}3"
+EFI_PART="${DISK}p1"
+SWAP_PART="${DISK}p2"
+ROOT_PART="${DISK}p3"
 HOSTNAME="kubopc"
 POSTINSTALL_WORK_DIR=/tmp/postinstall
 USERNAME="kubo"
@@ -149,8 +149,8 @@ as_user() {
     python3 -m venv venv
     source venv/bin/activate
 
-    echo \"Installing ansible...\"
-    pip3 install ansible
+    echo \"Installing python modules...\"
+    pip3 install ansible build setuptools wheel installer poetry-core
 
     echo \"Cloning archsetup repository...\"
     git clone https://github.com/kubo11/archsetup.git
