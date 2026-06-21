@@ -82,7 +82,7 @@ hl.config({
 })
 
 hl.permission("/usr/(bin|local/bin)/grim", "screencopy", "allow")
-hl.permission("/usr/(bin|local/bin)/wl-screenrec", "screencopy", "allow")
+hl.permission("/usr/(bin|local/bin)/wf-recorder", "screencopy", "allow")
 hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencopy", "allow")
 hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")
 
@@ -261,8 +261,8 @@ hl.bind("ALT + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | swappy -f -')
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp -d)" - | wl-copy'))  -- copy selected area
 
 -- Screencast
-hl.bind("ALT + SHIFT + D", hl.dsp.exec_cmd('wl-screenrec -g "$(slurp)" -f ~/Videos/screencast-$(date +%FT%T%:z).mp4'))   -- selected area
-hl.bind("SUPER + SHIFT + D", hl.dsp.exec_cmd('wl-screenrec -f ~/Videos/screencast-$(date +%FT%T%:z).mp4'))               -- fullscreen
+hl.bind("ALT + SHIFT + D", hl.dsp.exec_cmd('wf-recorder -g "$(slurp)" -f ~/Videos/screencast-$(date +%FT%T%:z).mp4'))   -- selected area
+hl.bind("SUPER + SHIFT + D", hl.dsp.exec_cmd('wf-recorder -f ~/Videos/screencast-$(date +%FT%T%:z).mp4'))               -- fullscreen
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

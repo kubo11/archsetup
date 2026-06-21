@@ -4,10 +4,5 @@
     - grim
     - slurp
     - swappy
+    - wf-recorder
    state: present
-
-- name: Install screencast utility
-  ansible.builtin.include_tasks: tasks/yay_package.yml
-  vars:
-    yay_packages:
-      - wl-screenrec
