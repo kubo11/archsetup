@@ -1,7 +1,8 @@
-- name: Install ssh tool
+- name: Install ssh tools
   community.general.pacman:
     name:
       - openssh
+      - keychain
     state: present
   become: true
 
