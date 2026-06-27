@@ -1,36 +1,25 @@
 - name: Install terminal emulator
   community.general.pacman:
-   name: 
-    - ghostty
-   state: present
+    name:
+      - ghostty
+    state: present
+  become: true
 
 - name: Install shell
   community.general.pacman:
-   name: 
-    - fish
-   state: present
+    name:
+      - fish
+    state: present
+  become: true
 
 - name: Set user shell
   ansible.builtin.user:
     name: "{{ username }}"
     shell: /usr/bin/fish
 
-- name: Ensure fish config directory exists
-  file: path={{ fish_config_dir }}
-        state=directory
-        owner={{ username }}
-        group={{ username }}
-
-- name: Generate shell config from template
-  ansible.builtin.template:
-    src: config.fish.j2
-    dest: "{{ fish_config_path }}"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'
-
 - name: Install terminal multiplexer
   community.general.pacman:
-   name: 
-    - tmux
-   state: present
+    name:
+      - tmux
+    state: present
+  become: true

@@ -16,6 +16,14 @@
 
 - name: Install vulnerability checking utility
   community.general.pacman:
-   name: 
-    - arch-audit
-   state: present 
+    name: 
+      - arch-audit
+    state: present
+  become: true
+
+- name: Install encryption tool
+  community.general.pacman:
+    name: 
+      - age
+    state: present
+  become: true

@@ -1,8 +1,9 @@
 - name: Install Hyprland
   community.general.pacman:
-   name: 
-    - hyprland
-   state: present
+    name: 
+      - hyprland
+     state: present
+  become: true
 
 - name: Ensure hyprland config directory exists
   file: path={{ hyprland_config_dir }}

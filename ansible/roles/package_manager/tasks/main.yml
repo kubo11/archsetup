@@ -2,10 +2,12 @@
   pacman: 
     update_cache: yes
     upgrade: yes
+  become: true
 
 - name: Configure pacman
   ansible.builtin.include_tasks:
     file: pacman.yml
+  become: true
 
 - name: Check if yay is installed
   ansible.builtin.stat:
@@ -21,3 +23,4 @@
   ansible.builtin.shell: yay
   register: command_result
   failed_when: command_result.rc != 0
+  become: true

@@ -175,6 +175,10 @@ read -s USER_PASS
 echo \"\"
 printf '$USERNAME:%s\n' \"\$USER_PASS\" | chpasswd
 
+echo -n \"$USERNAME ssh passphrase: \" 
+read -s USER_SSH_PASSPHRASE
+echo \"\"
+
 echo \"Adding wheel group to sudoers (passwordless)...\"
 printf '%s\n' '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-wheel
 chmod 440 /etc/sudoers.d/10-wheel
@@ -185,6 +189,7 @@ tmp_vars=\"\$(mktemp)\"
 chmod 600 \"\$tmp_vars\"
 
 printf 'ansible_become_password: \"%s\"\n' \"\$USER_PASS\" > \"\$tmp_vars\"
+printf 'ssh_passphrase: \"%s\"\n' \"\$USER_SSH_PASSPHRASE\" >> \"\$tmp_vars\"
 
 chown \"$USERNAME:$USERNAME\" \"\$tmp_vars\"
 

@@ -1,13 +1,15 @@
-- name: Install GTJ
+- name: Install GTK
   community.general.pacman:
-   name: 
-    - gtk3
-    - gtk4
-   state: present
+    name: 
+      - gtk3
+      - gtk4
+    state: present
+  become: true
 
 - name: Install QT Wayland support
   community.general.pacman:
-   name: 
-    - qt5-wayland
-    - qt6-wayland
-   state: present
+    name: 
+      - qt5-wayland
+      - qt6-wayland
+    state: present
+  become: true

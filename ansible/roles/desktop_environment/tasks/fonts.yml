@@ -1,10 +1,11 @@
 - name: Install fonts packages
   community.general.pacman:
-   name:
-    - kbd
-    - noto-fonts
-    - nerd-fonts
-   state: present
+    name:
+      - kbd
+      - noto-fonts
+      - nerd-fonts
+    state: present
+  become: true
 
 - name: Set font for current console session
   ansible.builtin.command:
@@ -20,3 +21,4 @@
     owner: root
     group: root
     mode: "0644"
+  become: true

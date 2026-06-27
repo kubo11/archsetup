@@ -1,10 +1,11 @@
 - name: Install YubiKey software from pacman
   community.general.pacman:
-   name: 
-    - yubikey-manager
-    - pam-u2f
-    - libfido2
-   state: present
+    name: 
+      - yubikey-manager
+      - pam-u2f
+      - libfido2
+    state: present
+  become: true
 
 - name: Create YubiKey udev rule (non-root access)
   ansible.builtin.copy:
@@ -16,9 +17,11 @@
     content: |
       ACTION=="add|change", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0010|0110|0111|0114|0116|0401|0403|0405|0407|0410", ENV{ID_SECURITY_TOKEN}="1"
   notify: Reload udev rules
+  become: true
 
 - name: Install yubico-authenticator
   ansible.builtin.include_tasks: tasks/yay_package.yml
   vars:
     yay_packages:
       - yubico-authenticator
+  become: true

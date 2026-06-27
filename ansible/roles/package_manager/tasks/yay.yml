@@ -9,17 +9,16 @@
     name: '{{ item }}'
     state: present
   loop: '{{ yay_deps }}'
+  become: true
 
 - name: Clone and checkout yay repo
   ansible.builtin.git:
     repo: '{{ yay_repo }}'
     dest: '{{ yay_repo_dir }}'
-  become: false
 
 - name: Build and install yay
   ansible.builtin.shell: makepkg -si --noconfirm
   args:
     chdir: '{{ yay_repo_dir }}'
   register: command_result
-  become: false
   failed_when: command_result.rc != 0

@@ -4,10 +4,11 @@
 
 - name: Install audio controlling utilities
   community.general.pacman:
-   name: 
-    - playerctl
-    - alsa-utils
-   state: present
+    name:
+      - playerctl
+      - alsa-utils
+    state: present
+  become: true
 
 - name: Unmute alsa
   ansible.builtin.shell: |
@@ -15,29 +16,25 @@
 
 - name: Install image editors
   community.general.pacman:
-   name:
-    - gimp
-    - inkscape
-   state: present
-
-- name: Install image editors
-  community.general.pacman:
-   name:
-    - gimp
-    - inkscape
-    - imagemagick
-   state: present
+    name:
+      - gimp
+      - inkscape
+      - imagemagick
+    state: present
+  become: true
 
 - name: Install audio editors
   community.general.pacman:
-   name:
-    - audacity
-   state: present
+    name:
+     - audacity
+    state: present
+  become: true
 
 - name: Install video software
   community.general.pacman:
-   name:
-    - ffmpeg
-    - mpv
-    - yt-dlp
-   state: present
+    name:
+      - ffmpeg
+      - mpv
+      - yt-dlp
+    state: present
+  become: true

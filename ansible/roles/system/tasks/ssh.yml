@@ -1,5 +1,14 @@
 - name: Install ssh tool
   community.general.pacman:
-   name:
-    - openssh
-   state: present
+    name:
+      - openssh
+    state: present
+  become: true
+
+- name: Generate an OpenSSH keypair
+  community.crypto.openssh_keypair:
+    path: "/home/{{ username }}/.ssh/id_ed25519"
+    type: ed25519
+    state: present
+    owner: "{{ username }}"
+    passphrase: "{{ ssh_passphrase }}"

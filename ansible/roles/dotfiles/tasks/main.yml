@@ -1,0 +1,10 @@
+- name: Install dotfiles manager
+  community.general.pacman:
+   name:
+    - chezmoi
+   state: present
+
+- name: Setup dotfiles
+  ansible.builtin.shell: chezmoi init --apply {{ dotfiles_repo }}
+  register: command_result
+  failed_when: command_result.rc != 0

@@ -5,6 +5,7 @@
     insertbefore: BOF
     state: present
     backup: true
+  become: true
 
 - name: Add access rules to /etc/security/access.conf
   become: true
@@ -19,3 +20,4 @@
       + : {{ username }} : ALL
       + : greeter : greetd
       - : ALL : ALL
+  become: true

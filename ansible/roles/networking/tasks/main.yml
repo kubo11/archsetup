@@ -1,15 +1,17 @@
 - name: Install network manager frontend
   community.general.pacman:
-   name:
-    - networkmanager-dmenu
-   state: present
+    name:
+      - networkmanager-dmenu
+  state: present
+  become: true
 
 - name: Install firewall
   community.general.pacman:
-   name:
-    - nftables
-    - ufw
-   state: present
+    name:
+      - nftables
+      - ufw
+    state: present
+  become: true
 
 - name: Enable ufw service
   become: true

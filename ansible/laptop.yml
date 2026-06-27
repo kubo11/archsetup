@@ -1,28 +1,12 @@
 - hosts: laptop
   roles:
-    - role: package_manager
-      become: true
-
-    - role: security
-      become: true
-
-    - role: boot
-      become: true
-
-    - role: networking
-      become: true
-
-    - role: system
-      become: true
-
-    - role: input
-      become: true
-
-    - role: terminal
-      become: true
-
-    - role: multimedia
-      become: true
-
-    - role: desktop_environment
-      become: true
+    - package_manager
+    - dotfiles
+    - security
+    - boot
+    - networking
+    - system
+    - input
+    - terminal
+    - multimedia
+    - desktop_environment

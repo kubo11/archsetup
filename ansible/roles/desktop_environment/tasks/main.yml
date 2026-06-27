@@ -45,15 +45,17 @@
 
 - name: Install device mounting utility
   community.general.pacman:
-   name: 
-    - udiskie
-   state: present
+    name: 
+      - udiskie
+    state: present
+  become: true
 
 - name: Install brightness controlling utility
   community.general.pacman:
-   name: 
-    - brightnessctl
-   state: present
+    name: 
+      - brightnessctl
+    state: present
+  become: true
 
 - name: Install and setup XDG
   ansible.builtin.include_tasks:

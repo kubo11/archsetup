@@ -9,3 +9,17 @@
 - name: Install and setup ssh
   ansible.builtin.include_tasks:
     file: ssh.yml
+
+- name: Install file manager
+  community.general.pacman:
+    name:
+      - yazi
+    state: present
+  become: true
+
+- name: Install web browser
+  community.general.pacman:
+    name:
+      - ironwolf
+    state: present
+  become: true

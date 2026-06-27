@@ -1,9 +1,10 @@
 - name: Install XDG Desktop Portal
   community.general.pacman:
-   name:
-    - xdg-desktop-portal-hyprland
-    - xdg-desktop-portal-gtk
-   state: present
+    name:
+      - xdg-desktop-portal-hyprland
+      - xdg-desktop-portal-gtk
+    state: present
+  become: true
 
 - name: Ensure xdg desktop portal config directory exists
   file: path={{ user_config_dir }}/xdg-desktop-portal
@@ -22,8 +23,14 @@
     group: "{{ username }}"
     mode: '0644'
 
-- name: Setup XDG user dirs
+- name: Install XDG user dirs package
   community.general.pacman:
-   name:
-    - xdg-user-dirs
-   state: present
+    name:
+      - xdg-user-dirs
+    state: present
+  become: true
+
+- name: Setup XDG user dirs
+  ansible.builtin.shell: xdg-user-dirs-update
+  register: command_result
+  failed_when: command_result.rc != 0

@@ -1,24 +1,25 @@
 - name: Install some core packages
   community.general.pacman:
-   name:
-    - coreutils
-    - less
-    - diffutils
-    - grep
-    - sed
-    - gawk
-    - util-linux
-   state: present
+    name:
+     - coreutils
+     - less
+     - diffutils
+     - grep
+     - sed
+     - gawk
+     - util-linux
+    state: present
+  become: true
 
 - name: Install core packages alternatives
   community.general.pacman:
-   name:
-    - bat
-    - zoxide
-    - rsync
-    - lsd
-    - fd
-    - ripgrep
-    - fzf
-    - 
-   state: present
+    name:
+     - bat
+     - zoxide
+     - rsync
+     - lsd
+     - fd
+     - ripgrep
+     - fzf
+    state: present
+  become: true

@@ -1,11 +1,13 @@
 - name: Install copy/paste utilty
   community.general.pacman:
-   name: 
-    - wl-clipboard
-   state: present
+    name: 
+      - wl-clipboard
+    state: present
+  become: true
 
 - name: Install clipboard manager
   ansible.builtin.include_tasks: tasks/yay_package.yml
   vars:
     yay_packages:
       - clipvault
+  become: true
