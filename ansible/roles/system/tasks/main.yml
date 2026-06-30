@@ -18,8 +18,8 @@
   become: true
 
 - name: Install web browser
-  community.general.pacman:
-    name:
-      - ironwolf
-    state: present
+  ansible.builtin.include_tasks: tasks/yay_package.yml
+  vars:
+    yay_packages:
+      - librewolf-bin
   become: true
