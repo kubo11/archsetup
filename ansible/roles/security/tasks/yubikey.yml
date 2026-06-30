@@ -24,4 +24,3 @@
   vars:
     yay_packages:
       - yubico-authenticator
-  become: true
