@@ -7,6 +7,7 @@
     - { regexp: '^#Color$', replace: 'Color' }
     - { regexp: '^#VerbosePkgLists$', replace: 'VerbosePkgLists' }
     - { regexp: '^ParallelDownloads = 5$', replace: 'ParallelDownloads = 8' }
+  become: true
 
 - name: Enable repositories
   replace:
@@ -16,9 +17,11 @@
   loop: '{{ pacman_repos }}'
   notify: Update pacman cache
   when: pacman_repos is defined
+  become: true
 
 - name: Install extra pacman tools
   community.general.pacman:
-   name: 
-    - pacman-contrib
-   state: present 
+    name: 
+      - pacman-contrib
+    state: present 
+  become: true
