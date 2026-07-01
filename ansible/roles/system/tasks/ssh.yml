@@ -6,6 +6,12 @@
     state: present
   become: true
 
+- name: Ensure ssh config directory exists
+  file: path=/home/{{ username }}/.ssh
+        state=directory
+        owner={{ username }}
+        group={{ username }}
+
 - name: Generate an OpenSSH keypair
   community.crypto.openssh_keypair:
     path: "/home/{{ username }}/.ssh/id_ed25519"
