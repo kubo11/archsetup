@@ -2,7 +2,7 @@
   community.general.pacman:
     name: 
       - hyprland
-     state: present
+    state: present
   become: true
 
 - name: Ensure hyprland config directory exists

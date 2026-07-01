@@ -1,47 +1,54 @@
 - name: Install Nvidia drivers and utilities
   community.general.pacman:
-   name: 
-    - nvidia-open-dkms
-    - nvidia-utils
-#    - lib32-nvidia-utils
-    - egl-wayland
-   state: present
+    name: 
+      - nvidia-open-dkms
+      - nvidia-utils
+#     - lib32-nvidia-utils
+      - egl-wayland
+    state: present
+  become: true
   
 - name: Install status bar
   community.general.pacman:
-   name: 
-    - waybar
-   state: present
+    name: 
+      - waybar
+    state: present
+  become: true
 
 - name: Install wallpaper utility
   community.general.pacman:
-   name: 
-    - hyprpaper
-   state: present
+    name: 
+      - hyprpaper
+    state: present
+  become: true
 
 - name: Install app launcher
   community.general.pacman:
-   name: 
-    - rofi
-   state: present
+    name: 
+      - rofi
+    state: present
+  become: true
 
 - name: Install color picker
   community.general.pacman:
-   name: 
-    - hyprpicker
-   state: present
+    name: 
+      - hyprpicker
+    state: present
+  become: true
 
 - name: Install notification daemon
   community.general.pacman:
-   name: 
-    - dunst
-   state: present
+    name: 
+      - dunst
+    state: present
+  become: true
 
 - name: Install authentication daemon
   community.general.pacman:
-   name: 
-    - hyprpolkitagent
-   state: present
+    name: 
+      - hyprpolkitagent
+    state: present
+  become: true
 
 - name: Install device mounting utility
   community.general.pacman:

@@ -2,7 +2,7 @@
   community.general.pacman:
     name:
       - networkmanager-dmenu
-  state: present
+    state: present
   become: true
 
 - name: Install firewall
