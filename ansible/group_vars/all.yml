@@ -1,4 +1,4 @@
 # User info
 username: kubo
 user_config_dir: "/home/{{ username }}/.config"
-github_user: kubo11
+github_username: kubo11
