@@ -9,7 +9,7 @@
 - name: Install bcrypt for Python
   community.general.pacman:
     name:
-      - python3-bcrypt
+      - python-bcrypt
     state: present
   become: true
 
