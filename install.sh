@@ -167,7 +167,7 @@ as_user() {
 echo \"Running root setup...\"
 
 echo \"Adding user $USERNAME...\"
-useradd -m -G wheel -s /bin/bash \"$USERNAME\" 2>/dev/null || true
+useradd -m -G audio,wheel -s /bin/bash \"$USERNAME\" 2>/dev/null || true
 
 echo \"Setting user $USERNAME password...\"
 echo -n \"$USERNAME password: \" 
