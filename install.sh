@@ -80,7 +80,7 @@ mount "$EFI_PART" /mnt/boot/efi
 swapon "$SWAP_PART"
 
 echo "Installing essential software..."
-pacstrap -K /mnt base linux linux-firmware linux-headers grub efibootmgr btrfs-progs git python3 networkmanager sudo alsa-firmware
+pacstrap -K /mnt base linux linux-firmware linux-headers grub efibootmgr btrfs-progs git python3 networkmanager sudo sof-firmware
 
 echo "Generating fstab..."
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -150,7 +150,7 @@ as_user() {
     source venv/bin/activate
 
     echo \"Installing python modules...\"
-    pip3 install ansible build setuptools wheel installer poetry-core bcrypt
+    pip3 install ansible build setuptools wheel installer poetry-core
 
     echo \"Cloning archsetup repository...\"
     git clone https://github.com/kubo11/archsetup.git

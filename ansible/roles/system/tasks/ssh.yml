@@ -6,6 +6,13 @@
     state: present
   become: true
 
+- name: Install bcrypt for Python
+  community.general.pacman:
+    name:
+      - python3-bcrypt
+    state: present
+  become: true
+
 - name: Ensure ssh config directory exists
   file: path=/home/{{ username }}/.ssh
         state=directory

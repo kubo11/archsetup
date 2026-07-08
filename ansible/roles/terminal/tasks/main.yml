@@ -16,6 +16,7 @@
   ansible.builtin.user:
     name: "{{ username }}"
     shell: /usr/bin/fish
+  become: true
 
 - name: Install terminal multiplexer
   community.general.pacman:
