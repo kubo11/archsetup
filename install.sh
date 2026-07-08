@@ -150,7 +150,7 @@ as_user() {
     source venv/bin/activate
 
     echo \"Installing python modules...\"
-    pip3 install ansible build setuptools wheel installer poetry-core
+    pip3 install ansible build setuptools wheel installer poetry-core bcrypt
 
     echo \"Cloning archsetup repository...\"
     git clone https://github.com/kubo11/archsetup.git
