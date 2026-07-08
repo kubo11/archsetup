@@ -11,6 +11,7 @@
   ansible.builtin.command:
     cmd: "setfont {{ font }}"
   changed_when: true
+  become: true
 
 - name: Persist console font in /etc/vconsole.conf
   ansible.builtin.lineinfile:
