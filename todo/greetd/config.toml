@@ -1,0 +1,6 @@
+[terminal]
+vt = 1
+
+[default_session]
+command = "dbus-run-session start-hyprland >/tmp/hyprland.log 2>&1 -- -c /etc/greetd/hyprland.lua "
+user = "greeter"

@@ -1,0 +1,23 @@
+mpv-mpris
+inotify-tools
+rofi-calc
+hypridle
+hyprlock
+mpvpaper yay
+socat
+bluez
+bluez-utils
+tev
+ddcutil
+sioyek yay
+blueman
+nordic theme yay
+btop
+snapper
+nwg-look
+plymouth
+
+~/.config/waybar/waybar-config-watcher.sh
+~/.config/systemd/user/waybar-config-watcher.service
+systemctl --user daemon-reload
+systemctl --user enable --now waybar-watch.service
