@@ -9,13 +9,49 @@ bluez
 bluez-utils
 tev
 ddcutil
-sioyek yay
 blueman
 nordic theme yay
 btop
 snapper
 nwg-look
 plymouth
+gamemode
+gamescope
+steam
+openlogi
+nwg-displays
+zathura
+zathura-pdf-mupdf
+man-db
+man-pages
+axel
+rclone
+cups
+cups-pdf
+quickshell
+qemu-full
+virt-manager
+podman
+nvidia-container-toolkit
+imv
+prismlauncher
+spotify-launcher
+qt6-5compat
+fastfetch
+kwallet
+bitwarden
+telegram-desktop
+ccid
+opensc
+
+systemctl service enable libvirtd.socket
+systemctl service enable cups.socket
+systemctl service enable pcscd.socket
+
+groups: kubo libvirt gamemode audio wheel plugdev
+
+pacman -> multilib
+pacman -> mirrors
 
 ~/.config/waybar/waybar-config-watcher.sh
 ~/.config/systemd/user/waybar-config-watcher.service
