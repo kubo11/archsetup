@@ -25,3 +25,12 @@
     state: enabled
     policy: deny
   become: true
+
+- name: Install bluetooth software
+  community.general.pacman:
+    name:
+      - bluez
+      - bluez-utils
+      - blueman
+    state: present
+  become: true

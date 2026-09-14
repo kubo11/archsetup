@@ -4,3 +4,7 @@ font: "eurlatgr.psfu"
 greetd_config_dir: /etc/greetd
 greetd_config_path: "{{ greetd_config_dir }}/config.toml"
 greetd_hyprland_path: "{{ greetd_config_dir }}/hyprland.lua"
+regreet_hyprland_path: "{{ greetd_config_dir }}/regreet.toml"
+wallpaper_url: "https://www.youtube.com/watch?v=07WzyahRPBk"
+wallpaper_dir: "/usr/share/backgrounds"
+wallpaper_path: "{{ wallpaper_dir }}/wallpaper.jpg"

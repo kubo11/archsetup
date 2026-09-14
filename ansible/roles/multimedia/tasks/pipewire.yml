@@ -14,3 +14,16 @@
       - qpwgraph
     state: present
   become: true
+
+- name: Ensure group "audio" exists
+  ansible.builtin.group:
+    name: audio
+    state: present
+  become: true
+
+- name: Add user to "audio" group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: audio
+    append: true
+  become: true

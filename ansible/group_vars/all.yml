@@ -2,3 +2,5 @@
 username: kubo
 user_config_dir: "/home/{{ username }}/.config"
 github_username: kubo11
+pacman_repos:
+  - multilib

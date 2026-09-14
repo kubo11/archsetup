@@ -3,7 +3,7 @@
     name: 
       - nvidia-open-dkms
       - nvidia-utils
-#     - lib32-nvidia-utils
+      - lib32-nvidia-utils
       - egl-wayland
     state: present
   become: true
@@ -15,6 +15,14 @@
     state: present
   become: true
 
+- name: Enable and start waybar config watcher
+  ansible.builtin.systemd_service:
+    name: waybar-config-watcher.service
+    scope: user
+    daemon_reload: true
+    enabled: true
+    state: started
+
 - name: Install wallpaper utility
   community.general.pacman:
     name: 
@@ -22,10 +30,26 @@
     state: present
   become: true
 
-- name: Install app launcher
+- name: Ensure wallpaper directory exists
+  ansible.builtin.file:
+    path: "{{ wallpaper_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Download wallpaper
+  ansible.builtin.shell: "ffmpeg -ss 00:00:00 -i (ytdl -f bv -g '{{ wallpaper_url }}') -vframes 1 {{ wallpaper_path }}"
+  chdir: /tmp
+  register: command_result
+  failed_when: command_result.rc != 0
+
+- name: Install app launcher & extensions
   community.general.pacman:
     name: 
       - rofi
+      - rofi-calc
     state: present
   become: true
 
@@ -53,14 +77,30 @@
 - name: Install device mounting utility
   community.general.pacman:
     name: 
+      - udisks2
       - udiskie
     state: present
   become: true
 
-- name: Install brightness controlling utility
+- name: Install brightness controlling utilities
   community.general.pacman:
     name: 
       - brightnessctl
+      - ddcutil
+    state: present
+  become: true
+
+- name: Install quickshell
+  community.general.pacman:
+    name:
+      - quickshell
+    state: present
+  become: true
+
+- name: Install display management software
+  community.general.pacman:
+    name:
+      - nwg-displays
     state: present
   become: true
 

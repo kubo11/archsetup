@@ -8,6 +8,8 @@
      - sed
      - gawk
      - util-linux
+     - man-db
+     - man-pages
     state: present
   become: true
 

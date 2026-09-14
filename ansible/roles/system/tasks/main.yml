@@ -22,3 +22,56 @@
   vars:
     yay_packages:
       - librewolf-bin
+
+- name: Install system info tools
+  community.general.pacman:
+    name:
+      - btop
+      - nvtop
+      - fastfetch
+    state: present
+  become: true
+
+- name: Install communication software
+  community.general.pacman:
+    name:
+      - telegram-desktop
+      - discord
+    state: present
+  become: true
+
+- name: Install printing software
+  community.general.pacman:
+    name:
+      - cups
+      - cups-pdf
+    state: present
+  become: true
+
+- name: Enable and start cups.socket service
+  ansible.builtin.systemd_service:
+    name: cups.socket
+    enabled: true
+    state: started
+
+- name: Install downloading utilities
+  community.general.pacman:
+    name:
+      - axel
+      - rclone
+    state: present
+  become: true
+
+- name: Install backup utilities
+  community.general.pacman:
+    name:
+      - snapper
+    state: present
+  become: true
+
+- name: Install inotify cli tools
+  community.general.pacman:
+    name:
+      - inotify-tools
+    state: present
+  become: true

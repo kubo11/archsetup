@@ -1,0 +1,28 @@
+skip_selection = true
+
+[background]
+path = "/usr/share/backgrounds/wallpaper.jpg"
+fit = "Cover"
+
+[env]
+# env vars for session
+
+[GTK]
+application_prefer_dark_theme = true
+cursor_theme_name = "Adwaita"
+cursor_blink = true
+font_name = "JetBrainsMono Nerd Font 13"
+icon_theme_name = "Adwaita"
+theme_name = "Nordic"
+
+[commands]
+reboot = [ "systemctl", "reboot" ]
+poweroff = [ "systemctl", "poweroff" ]
+
+[appearance]
+greeting_msg = "No dzień dobry ogółem"
+
+[widget.clock]
+format = "%a %H:%M:%S"
+resolution = "500ms"
+label_width = 150

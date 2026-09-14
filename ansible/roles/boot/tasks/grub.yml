@@ -1,15 +1,49 @@
-- name: Remove quiet from GRUB_CMDLINE_LINUX_DEFAULT
+- name: Install grub-silent package
+  ansible.builtin.include_tasks: tasks/yay_package.yml
+  vars:
+    yay_packages:
+      - grub-silent
+
+- name: Install grub-silent for UEFI
+  ansible.builtin.shell: grub-install --target=x86_64-efi --efi-diretory /boot/efi --bootloader-id=GRUB
+  register: command_result
+  failed_when: command_result.rc != 0
+  become: true
+
+- name: Ensure required kernel parameters are present in GRUB
   ansible.builtin.replace:
     path: /etc/default/grub
-    regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*)\bquiet\b\s*([^"]*")$'
-    replace: '\1\2'
+    regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT=")(?![^"]*(?<!\S){{ item | regex_escape }}(?!\S))([^"]*)"$'
+    replace: '\1\2 {{ item }}"'
+  loop:
+    - quiet
+    - splash
+    - loglevel=3
+    - systemd.show_status=auto
+    - rd.udev.log_level=3
   become: true
   notify: Regenerate grub config
 
-- name: Normalize extra spaces in GRUB_CMDLINE_LINUX_DEFAULT
-  ansible.builtin.replace:
+- name: Configure GRUB options
+  ansible.builtin.lineinfile:
     path: /etc/default/grub
-    regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*)\s{2,}([^"]*")$'
-    replace: '\1 \2'
+    regexp: '^{{ item.key }}='
+    line: '{{ item.key }}={{ item.value }}'
+    create: false
+  loop:
+    - key: GRUB_DEFAULT
+      value: '0'
+    - key: GRUB_TIMEOUT
+      value: '0'
+    - key: GRUB_RECORDFAIL_TIMEOUT
+      value: '$GRUB_TIMEOUT'
   become: true
   notify: Regenerate grub config
+
+- name: Add plymouth hook after systemd in mkinitcpio
+  ansible.builtin.replace:
+    path: /etc/mkinitcpio.conf
+    regexp: '^(HOOKS=\((?![^)]*\bplymouth\b)[^)]*\bsystemd\b)'
+    replace: '\1 plymouth'
+  become: true
+  notify: Regenerate initramfs

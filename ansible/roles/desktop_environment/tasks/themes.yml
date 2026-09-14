@@ -11,5 +11,19 @@
     name: 
       - qt5-wayland
       - qt6-wayland
+      - qt6-5compat
     state: present
   become: true
+
+- name: Install theme picker
+  community.general.pacman:
+    name: 
+      - nwg-look
+    state: present
+  become: true
+
+- name: Install nordic theme
+  ansible.builtin.include_tasks: tasks/yay_package.yml
+  vars:
+    yay_packages:
+      - makemkv

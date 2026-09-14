@@ -18,6 +18,13 @@
     state: present
   become: true
 
+- name: Install rgb control software
+  community.general.pacman:
+    name: 
+      - openrgb
+    state: present
+  become: true
+
 - name: Reload udev rules
   ansible.builtin.shell: udevadm control --reload-rules
   register: command_result
@@ -29,4 +36,20 @@
     name: 
      - v4l-utils
     state: present
+  become: true
+
+- name: Install optical disc burner
+  community.general.pacman:
+    name: 
+     - brasero
+    state: present
+  become: true
+
+- name: Enable i2c-dev kernel module (required by ddcutil)
+  ansible.builtin.copy:
+    src: i2c-dev.conf
+    dest: /etc/modules-load.d/i2c-dev.conf
+    owner: root
+    group: root
+    mode: '0644'
   become: true

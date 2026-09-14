@@ -19,6 +19,13 @@
   become: true
   notify: Reload systemd
 
+- name: Install plymouth
+  community.general.pacman:
+    name:
+      - plymouth
+    state: present
+  become: true
+
 - name: Setup GRUB
   ansible.builtin.include_tasks:
     file: grub.yml

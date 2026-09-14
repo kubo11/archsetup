@@ -4,8 +4,16 @@
       - yubikey-manager
       - pam-u2f
       - libfido2
+      - ccid
+      - opensc
     state: present
   become: true
+
+- name: Enable and start pcscd.socket service
+  ansible.builtin.systemd_service:
+    name: pcscd.socket
+    enabled: true
+    state: started
 
 - name: Create YubiKey udev rule (non-root access)
   ansible.builtin.copy:

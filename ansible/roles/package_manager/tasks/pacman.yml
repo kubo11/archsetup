@@ -9,6 +9,27 @@
     - { regexp: '^ParallelDownloads = 5$', replace: 'ParallelDownloads = 8' }
   become: true
 
+- name: Disable all pacman mirrors
+  ansible.builtin.replace:
+    path: /etc/pacman.d/mirrorlist
+    regexp: '^(\s*Server\s*=.*)$'
+    replace: '#\1'
+  become: true
+
+- name: Enable selected pacman mirrors
+  ansible.builtin.replace:
+    path: /etc/pacman.d/mirrorlist
+    regexp: '^#\s*(Server\s*=.*)$'
+    replace: '\1'
+    after: '^## {{ item }}$'
+    before: '^## '
+  loop:
+    - Worldwide
+    - Germany
+    - Poland
+  become: true
+  notify: Update pacman cache
+
 - name: Enable repositories
   replace:
     path: /etc/pacman.conf

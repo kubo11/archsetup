@@ -1,20 +1,9 @@
-- name: Install Hyprland
+- name: Install Hyprland & others
   community.general.pacman:
     name: 
       - hyprland
+      - hypridle
+      - hyprlock
+      - hyprsunset
     state: present
   become: true
-
-- name: Ensure hyprland config directory exists
-  file: path={{ hyprland_config_dir }}
-        state=directory
-        owner={{ username }}
-        group={{ username }}
-
-- name: Generate hyprland config from template
-  ansible.builtin.template:
-    src: hyprland.lua.j2
-    dest: "{{ hyprland_config_path }}"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0644'

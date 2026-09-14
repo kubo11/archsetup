@@ -14,12 +14,21 @@
   ansible.builtin.shell: |
     amixer sset Master unmute
 
-- name: Install image editors
+- name: Install image software
   community.general.pacman:
     name:
       - gimp
       - inkscape
       - imagemagick
+      - tev
+      - imv
+    state: present
+  become: true
+
+- name: Install spotify
+  community.general.pacman:
+    name:
+      - spotify-launcher
     state: present
   become: true
 
@@ -35,6 +44,36 @@
     name:
       - ffmpeg
       - mpv
+      - mpv-mpris
       - yt-dlp
+      - handbrake
+    state: present
+  become: true
+
+- name: Install makemkv
+  ansible.builtin.include_tasks: tasks/yay_package.yml
+  vars:
+    yay_packages:
+      - makemkv
+
+- name: Install book software
+  community.general.pacman:
+    name:
+      - calibre
+    state: present
+  become: true
+
+- name: Install pdf viewer
+  community.general.pacman:
+    name:
+      - zathura
+      - zathura-pdf-mupdf
+    state: present
+  become: true
+
+- name: Install office suite
+  community.general.pacman:
+    name:
+      - libreofice-still
     state: present
   become: true

@@ -1,0 +1,35 @@
+- name: Install containerization tools
+  community.general.pacman:
+    name:
+      - podman
+      - podman-compose
+      - nvidia-container-toolkit
+    state: present
+  become: true
+
+- name: Install virtualization tools
+  community.general.pacman:
+    name:
+      - qemu-full
+      - virt-manager
+    state: present
+  become: true
+
+- name: Ensure group "libvirt" exists
+  ansible.builtin.group:
+    name: libvirt
+    state: present
+  become: true
+
+- name: Add user to "libvirt" group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: libvirt
+    append: true
+  become: true
+
+- name: Enable and start libvirtd.socket service
+  ansible.builtin.systemd_service:
+    name: libvirtd.socket
+    enabled: true
+    state: started

@@ -1,0 +1,38 @@
+- name: Install gaming utilities
+  community.general.pacman:
+    name:
+      - gamemode
+      - gamescope
+    state: present
+  become: true
+
+- name: Ensure group "gamemode" exists
+  ansible.builtin.group:
+    name: gamemode
+    state: present
+  become: true
+
+- name: Add user to "gamemode" group
+  ansible.builtin.user:
+    name: "{{ username }}"
+    groups: gamemode
+    append: true
+  become: true
+
+- name: Install game launchers
+  community.general.pacman:
+    name:
+      - steam
+      - prismlauncher
+      - lutris
+    state: present
+  become: true
+
+- name: Install game emulators
+  community.general.pacman:
+    name:
+      - wine
+      - winetricks
+      - protontricks
+    state: present
+  become: true

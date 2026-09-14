@@ -26,9 +26,85 @@
     mode: '0644'
   become: true
 
+- name: Generate regreet config from template
+  ansible.builtin.template:
+    src: regreet.toml.j2
+    dest: "{{ regreet_config_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
 - name: Enable greetd service
   become: true
   ansible.builtin.systemd:
     name: greetd.service
     enabled: true
+    state: started
+
+- name: Create Hyprland desktop fix script
+  ansible.builtin.copy:
+    dest: /usr/local/sbin/fix-hyprland-desktop
+    owner: root
+    group: root
+    mode: '0755'
+    content: |
+      #!/bin/sh
+      set -eu
+
+      FILE="/usr/share/wayland-sessions/hyprland.desktop"
+
+      [ -f "$FILE" ] || exit 0
+
+      if ! grep -qF 'start-hyprland >/dev/null 2>&1' "$FILE"; then
+          sed -i 's|start-hyprland|start-hyprland >/dev/null 2>\&1|g' "$FILE"
+      fi
+
+- name: Create Hyprland desktop fix systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/hyprland-desktop-fix.service
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Ensure Hyprland output is redirected to devnull
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/sbin/fix-hyprland-desktop
+
+      [Install]
+      WantedBy=multi-user.target
+  notify:
+    - Reload systemd
+
+- name: Create user@.service drop-in directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/user@.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Run Hyprland desktop fix whenever a user session starts
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/user@.service.d/hyprland-desktop-fix.conf
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      [Unit]
+      Wants=hyprland-desktop-fix.service
+      After=hyprland-desktop-fix.service
+
+- name: Enable Hyprland desktop fix at boot
+  ansible.builtin.systemd_service:
+    name: hyprland-desktop-fix.service
+    enabled: true
+    daemon_reload: true
+
+- name: Run Hyprland desktop fix immediately
+  ansible.builtin.systemd_service:
+    name: hyprland-desktop-fix.service
     state: started
