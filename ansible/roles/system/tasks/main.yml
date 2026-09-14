@@ -62,16 +62,31 @@
     state: present
   become: true
 
-- name: Install backup utilities
-  community.general.pacman:
-    name:
-      - snapper
-    state: present
-  become: true
-
 - name: Install inotify cli tools
   community.general.pacman:
     name:
       - inotify-tools
     state: present
   become: true
+
+- name: Install backup utilities
+  community.general.pacman:
+    name:
+      - snapper
+      - grub-btrfs
+    state: present
+  become: true
+
+- name: Enable and start grub-btrfsd service
+  ansible.builtin.systemd_service:
+    name: grub-btrfsd
+    enabled: true
+    state: started
+
+- name: Copy snp script
+  ansible.builtin.copy:
+    src: snp
+    dest: /usr/bin/snp
+    owner: root
+    group: root
+    mode: '0755'
