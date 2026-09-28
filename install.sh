@@ -62,7 +62,7 @@ btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
 btrfs subvolume create /mnt/@log
 btrfs subvolume create /mnt/@pkg
-btrfs subvolume create /mnt/@.snapshots
+btrfs subvolume create /mnt/@snapshots
 
 umount /mnt
 
@@ -72,7 +72,7 @@ mount -o noatime,compress=zstd,subvol=@ "$ROOT_PART" /mnt
 mkdir -p /mnt/{var/log,var/cache/pacman/pkg,boot/efi}
 
 mount --mkdir -o noatime,compress=zstd,subvol=@home "$ROOT_PART" /mnt/home
-mount --mkdir -o noatime,compress=zstd,subvol=@.snapshots "$ROOT_PART" /mnt/.snapshots
+mount --mkdir -o noatime,compress=zstd,subvol=@snapshots "$ROOT_PART" /mnt/.snapshots
 mount -o noatime,compress=zstd,subvol=@log "$ROOT_PART" /mnt/var/log
 mount -o noatime,compress=zstd,subvol=@pkg "$ROOT_PART" /mnt/var/cache/pacman/pkg
 
