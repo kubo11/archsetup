@@ -7,3 +7,38 @@
       - hyprsunset
     state: present
   become: true
+
+- name: Copy Hyprland suspend script
+  ansible.builtin.copy:
+    src: hyprland-suspend.sh
+    dest: /usr/local/bin/hyprland-suspend.sh
+    mode: '0755'
+
+- name: Create Hyprland suspend systemd service
+  ansible.builtin.copy:
+    src: hyprland-suspend.service
+    dest: /etc/systemd/system/hyprland-suspend.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable Hyprland suspend service
+  ansible.builtin.systemd_service:
+    name: hyprland-suspend.service
+    enabled: true
+    daemon_reload: true
+
+- name: Create Hyprland resume systemd service
+  ansible.builtin.copy:
+    src: hyprland-resume.service
+    dest: /etc/systemd/system/hyprland-resume.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable Hyprland resume service
+  ansible.builtin.systemd_service:
+    name: hyprland-resume.service
+    enabled: true
+    daemon_reload: true
+

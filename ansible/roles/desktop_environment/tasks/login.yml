@@ -98,7 +98,7 @@
       Wants=hyprland-desktop-fix.service
       After=hyprland-desktop-fix.service
 
-- name: Enable Hyprland desktop fix at boot nad start immediately
+- name: Enable Hyprland desktop fix at boot and start immediately
   ansible.builtin.systemd_service:
     name: hyprland-desktop-fix.service
     enabled: true
