@@ -1,0 +1,20 @@
+- name: Install apparmor
+  community.general.pacman:
+    name: 
+      - apparmor
+    state: present
+  become: true
+
+- name: Enable apparmor service
+  ansible.builtin.systemd_service:
+    name: apparmor.service
+    enabled: true
+    daemon_reload: true
+
+- name: Enable apparmor cache
+  replace:
+    path: /etc/apparmor/parser.conf 
+    regexp: '#write-cache'
+    replace: 'write-cache'
+  become: true
+

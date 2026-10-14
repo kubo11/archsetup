@@ -14,6 +14,10 @@
   ansible.builtin.include_tasks:
     file: yubikey.yml
 
+- name: Setup AppArmor
+  ansible.builtin.include_tasks:
+    file: apparmor.yml
+
 - name: Install vulnerability checking utility
   community.general.pacman:
     name: 

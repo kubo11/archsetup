@@ -12,6 +12,8 @@
   ansible.builtin.copy:
     src: hyprland-suspend.sh
     dest: /usr/local/bin/hyprland-suspend.sh
+    owner: root
+    group: root
     mode: '0755'
 
 - name: Create Hyprland suspend systemd service
