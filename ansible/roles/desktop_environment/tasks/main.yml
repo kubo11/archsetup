@@ -40,8 +40,10 @@
   become: true
 
 - name: Download wallpaper
-  ansible.builtin.shell: "ffmpeg -ss 00:00:00 -i (ytdl -f bv -g '{{ wallpaper_url }}') -vframes 1 {{ wallpaper_path }}"
-  chdir: /tmp
+  ansible.builtin.shell: 
+  args:
+    cmd: "ffmpeg -ss 00:00:00 -i (ytdl -f bv -g '{{ wallpaper_url }}') -vframes 1 {{ wallpaper_path }}"
+    chdir: /tmp
   register: command_result
   failed_when: command_result.rc != 0
 
