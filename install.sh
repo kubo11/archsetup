@@ -62,7 +62,6 @@ btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
 btrfs subvolume create /mnt/@var_log
 btrfs subvolume create /mnt/@var_cache
-btrfs subvolume create /mnt/@var_spool
 btrfs subvolume create /mnt/@snapshots
 
 umount /mnt
@@ -76,7 +75,6 @@ mount --mkdir -o noatime,compress=zstd,subvol=@home "$ROOT_PART" /mnt/home
 mount --mkdir -o noatime,compress=zstd,subvol=@snapshots "$ROOT_PART" /mnt/.snapshots
 mount -o noatime,compress=zstd,subvol=@var_log "$ROOT_PART" /mnt/var/log
 mount -o noatime,compress=zstd,subvol=@var_cache "$ROOT_PART" /mnt/var/cache
-mount -o noatime,compress=zstd,subvol=@var_spool "$ROOT_PART" /mnt/var/spool
 
 mount "$EFI_PART" /mnt/boot/efi
 swapon "$SWAP_PART"
