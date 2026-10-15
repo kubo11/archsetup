@@ -28,7 +28,6 @@
     - Germany
     - Poland
   become: true
-  notify: Update pacman cache
 
 - name: Enable repositories
   replace:
@@ -36,8 +35,12 @@
     regexp: '^#\[{{ item }}\]$\n^#Include\s+=\s+/etc/pacman.d/mirrorlist$'
     replace: '[{{ item }}]\nInclude = /etc/pacman.d/mirrorlist'
   loop: '{{ pacman_repos }}'
-  notify: Update pacman cache
   when: pacman_repos is defined
+  become: true
+
+- name: Update pacman cache
+  community.general.pacman:
+    update_cache: true
   become: true
 
 - name: Install extra pacman tools
