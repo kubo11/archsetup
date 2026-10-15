@@ -20,7 +20,6 @@
     - { name: home, mountpoint: /home }
     - { name: var_log, mountpoint: /var/log }
     - { name: var_cache, mountpoint: /var/cache }
-    - { name: var_spool, mountpoint: /var/spool }
   become: true
 
 - name: Remove /.snaphosts created by snapper
