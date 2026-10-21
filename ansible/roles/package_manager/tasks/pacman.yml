@@ -21,8 +21,8 @@
     path: /etc/pacman.d/mirrorlist
     regexp: '^#\s*(Server\s*=.*)$'
     replace: '\1'
-    after: '^## {{ item }}$'
-    before: '^## '
+    after: '## {{ item }}'
+    before: '(## |$)'
   loop:
     - Worldwide
     - Germany
