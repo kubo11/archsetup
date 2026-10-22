@@ -14,6 +14,7 @@
     name: pcscd.socket
     enabled: true
     state: started
+  become: true
 
 - name: Create YubiKey udev rule (non-root access)
   ansible.builtin.copy:
