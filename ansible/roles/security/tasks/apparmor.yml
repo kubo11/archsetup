@@ -10,6 +10,7 @@
     name: apparmor.service
     enabled: true
     daemon_reload: true
+  become: true
 
 - name: Enable apparmor cache
   replace:
