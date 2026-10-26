@@ -69,18 +69,18 @@ umount /mnt
 echo "Mounting rootfs..."
 mount -o noatime,compress=zstd,subvol=@ "$ROOT_PART" /mnt
 
-mkdir -p /mnt/{var/log,var/cache/pacman/pkg,boot/efi}
+mkdir -p /mnt/{var/log,var/cache/pacman/pkg,boot}
 
 mount --mkdir -o noatime,compress=zstd,subvol=@home "$ROOT_PART" /mnt/home
 mount --mkdir -o noatime,compress=zstd,subvol=@snapshots "$ROOT_PART" /mnt/.snapshots
 mount -o noatime,compress=zstd,subvol=@var_log "$ROOT_PART" /mnt/var/log
 mount -o noatime,compress=zstd,subvol=@var_cache "$ROOT_PART" /mnt/var/cache
 
-mount "$EFI_PART" /mnt/boot/efi
+mount "$EFI_PART" /mnt/boot
 swapon "$SWAP_PART"
 
 echo "Installing essential software..."
-pacstrap -K /mnt base linux linux-firmware linux-headers grub efibootmgr btrfs-progs git python3 networkmanager sudo sof-firmware
+pacstrap -K /mnt base linux linux-firmware linux-headers efibootmgr btrfs-progs git python3 networkmanager sudo sof-firmware
 
 echo "Generating fstab..."
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -112,8 +112,17 @@ echo \"Setting root password...\"
 printf 'root:%s\n' \"$ROOT_PASS\" | chpasswd
 
 echo \"Configuring boot loader...\"
-grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
-grub-mkconfig -o /boot/grub/grub.cfg    
+chmod 700 /boot
+bootctl install
+mkdir -p /boot/loader/entries
+echo \"default arch.conf
+timeout 4
+console-mode max
+editor no\" >/boot/loader/loader.conf
+echo \"title Arch Linux
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options root=UUID=$(lsblk -no UUID $EFI_PART) rootflags=subvol=@ rw\" >/boot/loader/entries/arch.conf
 
 exit" >/mnt/root/install-chrooted.sh
 chmod 755 /mnt/root/install-chrooted.sh
