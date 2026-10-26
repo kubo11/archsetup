@@ -120,7 +120,7 @@ editor no\" >/boot/loader/loader.conf
 echo \"title Arch Linux
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
-options root=UUID=$(lsblk -no UUID $EFI_PART) rootflags=subvol=@ rw\" >/boot/loader/entries/arch.conf
+options root=UUID=$(lsblk -no UUID $ROOT_PART) rootflags=subvol=@ rw\" >/boot/loader/entries/arch.conf
 
 exit" >/mnt/root/install-chrooted.sh
 chmod 755 /mnt/root/install-chrooted.sh
