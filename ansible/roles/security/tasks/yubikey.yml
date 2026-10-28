@@ -29,7 +29,10 @@
   become: true
 
 - name: Install yubico-authenticator
-  ansible.builtin.include_tasks: tasks/yay_package.yml
-  vars:
-    yay_packages:
-      - yubico-authenticator-bin
+  kewlfft.aur.aur:
+    name: yubico-authenticator-bin
+    use: yay
+    state: present
+  become: yes
+  become_user: aur_builder
+
