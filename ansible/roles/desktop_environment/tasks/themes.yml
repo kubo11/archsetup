@@ -24,6 +24,8 @@
 
 - name: Install nordic theme
   ansible.builtin.unarchive:
-    src: {{ nordic_theme_url }} 
-    dest: {{ theme_dir }} 
+    src: "{{ nordic_theme_url }}"
+    dest: "{{ theme_dir }}"
     remote_src: yes
+  become: true
+

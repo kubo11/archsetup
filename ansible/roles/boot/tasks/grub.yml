@@ -1,15 +1,3 @@
-- name: Install grub-silent package
-  ansible.builtin.include_tasks: tasks/yay_package.yml
-  vars:
-    yay_packages:
-      - grub-silent
-
-- name: Install grub-silent for UEFI
-  ansible.builtin.shell: grub-install --target=x86_64-efi --efi-diretory /boot/efi --bootloader-id=GRUB
-  register: command_result
-  failed_when: command_result.rc != 0
-  become: true
-
 - name: Ensure required kernel parameters are present in GRUB
   ansible.builtin.replace:
     path: /etc/default/grub
@@ -25,26 +13,3 @@
   become: true
   notify: Regenerate grub config
 
-- name: Configure GRUB options
-  ansible.builtin.lineinfile:
-    path: /etc/default/grub
-    regexp: '^{{ item.key }}='
-    line: '{{ item.key }}={{ item.value }}'
-    create: false
-  loop:
-    - key: GRUB_DEFAULT
-      value: '0'
-    - key: GRUB_TIMEOUT
-      value: '0'
-    - key: GRUB_RECORDFAIL_TIMEOUT
-      value: '$GRUB_TIMEOUT'
-  become: true
-  notify: Regenerate grub config
-
-- name: Add plymouth hook after systemd in mkinitcpio
-  ansible.builtin.replace:
-    path: /etc/mkinitcpio.conf
-    regexp: '^(HOOKS=\((?![^)]*\bplymouth\b)[^)]*\bsystemd\b)'
-    replace: '\1 plymouth'
-  become: true
-  notify: Regenerate initramfs

@@ -2,42 +2,26 @@
   community.general.pacman:
     name:
       - snapper
-      - grub-btrfs
     state: present
   become: true
 
-- name: Unmount and remove /.snapshots
-  ansible.builtin.shell: |
-    umount /.snapshots
-    rm -r /.snapshots
-  become: true
+- name: Create snapper configs  
+  block:
+    - name: Check if snapper config exists
+      stat:
+        path: /etc/snapper/{{ item.name }}
+      register: config
 
-- name: Create snapper configs
-  ansible.builtin.shell: |
-    snapper -c {{ item.name }} create-config {{ item.mountpoint }}
+    - name: Create snapper configs
+      ansible.builtin.shell: |
+        snapper -c {{ item.name }} create-config {{ item.mountpoint }}
+      when: not config.stat.exists
+      become: true
   loop:
     - { name: root, mountpoint: / }
     - { name: home, mountpoint: /home }
     - { name: var_log, mountpoint: /var/log }
     - { name: var_cache, mountpoint: /var/cache }
-  become: true
-
-- name: Remove /.snaphosts created by snapper
-  ansible.builtin.shell: |
-    btrfs subvolume delete /.snapshots
-  become: true
-
-- name: Mount snapshots subvolume
-  ansible.builtin.shell: |
-    mkdir /.snapshots
-    mount -a
-  become: true
-
-- name: Enable and start grub-btrfsd service
-  ansible.builtin.systemd_service:
-    name: grub-btrfsd
-    enabled: true
-    state: started
 
 - name: Copy snp script
   ansible.builtin.copy:
@@ -46,4 +30,5 @@
     owner: root
     group: root
     mode: '0755'
+  become: true
 

@@ -1,0 +1,10 @@
+[Unit]
+Description="Monitor waybar config file for changes"
+
+[Path]
+PathModified=/home/{{ username }}/.config/waybar
+Unit=reload-waybar.service
+
+[Install]
+WantedBy=multi-user.target
+

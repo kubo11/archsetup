@@ -54,6 +54,7 @@
     name: cups.socket
     enabled: true
     state: started
+  become: true
 
 - name: Install downloading utilities
   community.general.pacman:

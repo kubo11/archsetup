@@ -20,10 +20,15 @@
       - gimp
       - inkscape
       - imagemagick
-      - tev
       - imv
     state: present
   become: true
+
+- name: Install tev package
+  ansible.builtin.include_tasks: tasks/yay_package.yml
+  vars:
+    yay_packages:
+      - tev
 
 - name: Install spotify
   community.general.pacman:
@@ -74,6 +79,6 @@
 - name: Install office suite
   community.general.pacman:
     name:
-      - libreofice-still
+      - libreoffice-still
     state: present
   become: true

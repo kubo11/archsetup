@@ -1,0 +1,6 @@
+[Unit] 
+Description="Execute the script to reload waybar"
+
+[Service]
+ExecStart=/usr/local/bin/reload-waybar.sh
+
