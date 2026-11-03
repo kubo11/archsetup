@@ -24,13 +24,13 @@
     state: present
   become: true
 
-- name: Install tev
-  kewlfft.aur.aur:
-    name: tev
-    use: yay
-    state: present
-  become: yes
-  become_user: aur_builder
+#- name: Install tev
+#  kewlfft.aur.aur:
+#    name: tev
+#    use: yay
+#    state: present
+#  become: yes
+#  become_user: aur_builder
 
 - name: Install spotify
   community.general.pacman:

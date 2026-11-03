@@ -6,17 +6,7 @@
   become: true
 
 - name: Create snapper configs  
-  block:
-    - name: Check if snapper config exists
-      stat:
-        path: /etc/snapper/{{ item.name }}
-      register: config
-
-    - name: Create snapper configs
-      ansible.builtin.shell: |
-        snapper -c {{ item.name }} create-config {{ item.mountpoint }}
-      when: not config.stat.exists
-      become: true
+  ansible.builtin.include_tasks: configure_snapper.yml
   loop:
     - { name: root, mountpoint: / }
     - { name: home, mountpoint: /home }

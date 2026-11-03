@@ -8,18 +8,18 @@
     state: present
   become: true
 
-- name: Generate greetd config from template
-  ansible.builtin.template:
-    src: greetd-config.toml.j2
+- name: Copy greetd config
+  ansible.builtin.copy:
+    src: greetd-config.toml
     dest: "{{ greetd_config_path }}"
     owner: root
     group: root
     mode: '0644'
   become: true
 
-- name: Generate greetd-hyprland config from template
-  ansible.builtin.template:
-    src: greetd-hyprland.lua.j2
+- name: Copy greeth-hyprland config
+  ansible.builtin.copy:
+    src: greetd-hyprland.lua
     dest: "{{ greetd_hyprland_path }}"
     owner: root
     group: root
@@ -36,7 +36,6 @@
   become: true
 
 - name: Enable greetd service
-  become: true
   ansible.builtin.systemd:
     name: greetd.service
     enabled: true

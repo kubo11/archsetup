@@ -114,13 +114,13 @@ chmod 700 /boot
 bootctl install
 mkdir -p /boot/loader/entries
 echo \"default arch.conf
-timeout 4
+timeout 0
 console-mode max
 editor no\" >/boot/loader/loader.conf
 echo \"title Arch Linux
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
-options root=UUID=$(lsblk -no UUID $ROOT_PART) rootflags=subvol=@ rw\" >/boot/loader/entries/arch.conf
+options root=UUID=$(lsblk -no UUID $ROOT_PART) rootflags=subvol=@ rw quiet loglevel=3 systemd.show_status=auto rd.udev.log_level=3 lsm=landlock,lockdown,yama,integrity,apparmor,bpf\" >/boot/loader/entries/arch.conf
 
 exit" >/mnt/root/install-chrooted.sh
 chmod 755 /mnt/root/install-chrooted.sh

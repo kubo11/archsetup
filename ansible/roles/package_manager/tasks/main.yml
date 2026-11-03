@@ -18,8 +18,11 @@
     file: yay.yml
   when: not yay_status.stat.exists
 
-- name: Run yay upgrade
-  ansible.builtin.shell: yay
-  register: command_result
-  failed_when: command_result.rc != 0
-  become: true
+- name: Upgrade the system using yay, only act on AUR packages.
+  kewlfft.aur.aur:
+    upgrade: yes
+    use: yay
+    aur_only: yes
+  become: yes
+  become_user: aur_builder
+

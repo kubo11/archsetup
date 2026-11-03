@@ -19,6 +19,3 @@
   become: true
   notify: Reload systemd
 
-- name: Setup GRUB
-  ansible.builtin.include_tasks:
-    file: grub.yml

@@ -1,0 +1,12 @@
+- block:
+    - name: Check if snapper config exists
+      stat:
+        path: /etc/snapper/configs/{{ item.name }}
+      register: config
+
+    - name: Create snapper configs
+      ansible.builtin.shell: |
+        snapper -c {{ item.name }} create-config {{ item.mountpoint }}
+      when: not config.stat.exists
+      become: true
+

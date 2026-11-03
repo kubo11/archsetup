@@ -5,17 +5,17 @@
   loop: '{{ yay_deps }}'
   become: true
 
-- name: Clone and checkout yay repo
-  ansible.builtin.git:
-    repo: '{{ yay_repo }}'
-    dest: '{{ yay_repo_dir }}'
+#- name: Clone and checkout yay repo
+#  ansible.builtin.git:
+#    repo: '{{ yay_repo }}'
+#    dest: '{{ yay_repo_dir }}'
 
-- name: Build and install yay
-  ansible.builtin.shell: makepkg -si --noconfirm
-  args:
-    chdir: '{{ yay_repo_dir }}'
-  register: command_result
-  failed_when: command_result.rc != 0
+#- name: Build and install yay
+#  ansible.builtin.shell: makepkg -si --noconfirm
+#  args:
+#    chdir: '{{ yay_repo_dir }}'
+#  register: command_result
+#  failed_when: command_result.rc != 0
 
 - name: Create the `aur_builder` user
   become: yes
