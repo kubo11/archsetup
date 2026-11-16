@@ -28,11 +28,3 @@
   notify: Reload udev rules
   become: true
 
-- name: Install yubico-authenticator
-  kewlfft.aur.aur:
-    name: yubico-authenticator-bin
-    use: yay
-    state: present
-  become: yes
-  become_user: aur_builder
-

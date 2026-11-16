@@ -9,27 +9,24 @@ LANG="en_US.UTF-8"
 LANGUAGE="en_US:en:C"
 TIME="en_DK.UTF-8"
 DISK="$1"
-PLAYBOOK="$2"
-EFI_PART="${DISK}p1"
+BOOT_PART="${DISK}p1"
 SWAP_PART="${DISK}p2"
 ROOT_PART="${DISK}p3"
 HOSTNAME="kubopc"
 POSTINSTALL_WORK_DIR=/tmp/postinstall
 USERNAME="kubo"
 
-if [ -z "$DISK" ] || [ -z "$PLAYBOOK" ] ; then
-    echo "Usage: $0 /dev/DRIVE PLAYBOOK"
-    exit 1
-fi
-
-url="https://github.com/kubo11/archsetup/blob/main/ansible/${PLAYBOOK}.yml"
-if ! curl -L --fail --silent --output /dev/null "$url"; then
-    echo "Invalid playbook name: $PLAYBOOK"
+if [ -z "$DISK" ] ; then
+    echo "Usage: $0 /dev/DRIVE"
     exit 1
 fi
 
 echo -n "root password: " 
 read -s ROOT_PASS
+echo ""
+
+echo -n "$USERNAME password: " 
+read -s USER_PASS
 echo ""
 
 echo "Setting up keymap..."
@@ -43,7 +40,7 @@ echo "Setting up system drive..."
 sfdisk -w always -W always "$DISK" <<EOF
 label: gpt
 
-$EFI_PART : size=1024M, type=U
+$BOOT_PART : size=1024M, type=U
 $SWAP_PART: size=8192M, type=S
 $ROOT_PART : type=L
 EOF
@@ -51,7 +48,7 @@ EOF
 partprobe "$DISK"
 sleep 2
 
-mkfs.fat -F32 "$EFI_PART"
+mkfs.fat -F32 "$BOOT_PART"
 mkswap "$SWAP_PART"
 mkfs.btrfs "$ROOT_PART"
 
@@ -68,13 +65,11 @@ umount /mnt
 echo "Mounting rootfs..."
 mount -o noatime,compress=zstd,subvol=@ "$ROOT_PART" /mnt
 
-mkdir -p /mnt/{var/log,var/cache,boot}
-
 mount --mkdir -o noatime,compress=zstd,subvol=@home "$ROOT_PART" /mnt/home
-mount -o noatime,compress=zstd,subvol=@var_log "$ROOT_PART" /mnt/var/log
-mount -o noatime,compress=zstd,subvol=@var_cache "$ROOT_PART" /mnt/var/cache
+mount --mkdir -o noatime,compress=zstd,subvol=@var_log "$ROOT_PART" /mnt/var/log
+mount --mkdir -o noatime,compress=zstd,subvol=@var_cache "$ROOT_PART" /mnt/var/cache
 
-mount "$EFI_PART" /mnt/boot
+mount --mkdir "$BOOT_PART" /mnt/boot
 swapon "$SWAP_PART"
 
 echo "Installing essential software..."
@@ -109,14 +104,25 @@ systemctl enable NetworkManager.service
 echo \"Setting root password...\"
 printf 'root:%s\n' \"$ROOT_PASS\" | chpasswd
 
+echo \"Adding user $USERNAME...\"
+useradd -m -G audio,wheel -s /bin/bash \"$USERNAME\" 2>/dev/null || true
+echo \"Setting user $USERNAME password...\"
+printf '$USERNAME:%s\n' \"\$USER_PASS\" | chpasswd
+
+echo \"Adding wheel group to sudoers...\"
+printf '%s\n' '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/10-wheel
+chmod 440 /etc/sudoers.d/10-wheel
+visudo -cf /etc/sudoers.d/10-wheel
+
 echo \"Configuring boot loader...\"
-chmod 700 /boot
 bootctl install
 mkdir -p /boot/loader/entries
+
 echo \"default arch.conf
 timeout 0
 console-mode max
 editor no\" >/boot/loader/loader.conf
+
 echo \"title Arch Linux
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
@@ -130,91 +136,62 @@ echo "Chrooting into rootfs..."
 arch-chroot /mnt /bin/bash /root/install-chrooted.sh
 
 echo "Removing install-chrooted.sh..."
-rm -rf /mnt/root/install-chrooted.sh
+rm -f /mnt/root/install-chrooted.sh
 
-echo "Writing postinstall.sh to /mnt/root..."
+echo "Writing postinstall.sh to /mnt/home/$USERNAME..."
 echo "#!/bin/bash
 
 set -euo pipefail
 set +x
 
-as_user() {
-    echo \"Running \$(whoami) setup...\"
+PLAYBOOK=\"\$1\"
 
-    if [[ -z \"\${ANSIBLE_EXTRA_VARS_FILE:-}\" ]]; then
-        echo \"ANSIBLE_EXTRA_VARS_FILE is missing\"
-        exit 1
-    fi
+if [ -z \"\$PLAYBOOK\" ] ; then
+    echo \"Usage: \$0 DRIVE\"
+    exit 1
+fi
 
-    trap 'rm -f \"\$ANSIBLE_EXTRA_VARS_FILE\"' EXIT
+echo \"Running \$(whoami) setup...\"
 
-    echo \"Creating work dir...\"
-    mkdir -p $POSTINSTALL_WORK_DIR
-    cd $POSTINSTALL_WORK_DIR
-
-    echo \"Creating virtual environment...\"
-    python3 -m venv venv
-    source venv/bin/activate
-
-    echo \"Installing python modules...\"
-    pip3 install ansible build setuptools wheel installer poetry-core
-
-    echo \"Cloning archsetup repository...\"
-    git clone https://github.com/kubo11/archsetup.git
-
-    cd archsetup/ansible
-
-    echo \"Running ansible...\"
-    ansible-playbook $PLAYBOOK.yml --extra-vars \"@\$ANSIBLE_EXTRA_VARS_FILE\"
-
-    echo \"Exiting virtual environment...\"
-    deactivate
-}
-
-echo \"Running root setup...\"
-
-echo \"Adding user $USERNAME...\"
-useradd -m -G audio,wheel -s /bin/bash \"$USERNAME\" 2>/dev/null || true
-
-echo \"Setting user $USERNAME password...\"
-echo -n \"$USERNAME password: \" 
-read -s USER_PASS
-echo \"\"
-printf '$USERNAME:%s\n' \"\$USER_PASS\" | chpasswd
-
-echo -n \"$USERNAME ssh passphrase: \" 
+echo -n \"ssh passphrase: \" 
 read -s USER_SSH_PASSPHRASE
 echo \"\"
 
-echo \"Adding wheel group to sudoers (passwordless)...\"
-printf '%s\n' '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-wheel
-chmod 440 /etc/sudoers.d/10-wheel
-visudo -cf /etc/sudoers.d/10-wheel
-
-echo \"Saving $USERNAME become pass to temp file...\"
+echo \"Preparing ansible temp vars...\"
 tmp_vars=\"\$(mktemp)\"
 chmod 600 \"\$tmp_vars\"
 
-printf 'ansible_become_password: \"%s\"\n' \"\$USER_PASS\" > \"\$tmp_vars\"
 printf 'ssh_passphrase: \"%s\"\n' \"\$USER_SSH_PASSPHRASE\" >> \"\$tmp_vars\"
 
-chown \"$USERNAME:$USERNAME\" \"\$tmp_vars\"
+echo \"Creating work dir...\"
+mkdir -p $POSTINSTALL_WORK_DIR
+cd $POSTINSTALL_WORK_DIR
 
-echo \"Switching to user $USERNAME...\"
-export -f as_user
-ANSIBLE_EXTRA_VARS_FILE=\"\$tmp_vars\" runuser -u "$USERNAME" -- bash -c 'as_user'
+echo \"Creating virtual environment...\"
+python3 -m venv venv
+source venv/bin/activate
 
-echo \"Switching back to root...\"
+echo \"Installing python modules...\"
+pip3 install ansible build setuptools wheel installer poetry-core
 
-echo \"Changing sudo to passworded...\"
-rm -f /etc/sudoers.d/10-wheel
-printf '%s\n' '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/10-wheel
-chmod 440 /etc/sudoers.d/10-wheel
-visudo -cf /etc/sudoers.d/10-wheel
+echo \"Cloning archsetup repository...\"
+git clone https://github.com/kubo11/archsetup.git
 
-echo \"Removing postinstall.sh from /root...\"
-rm -rf /root/postinstall.sh" >/mnt/root/postinstall.sh
-chmod 755 /mnt/root/postinstall.sh
+cd archsetup/ansible
+
+echo \"Running ansible...\"
+ansible-playbook $PLAYBOOK.yml -K --extra-vars \"@\$temp_vars\"
+
+echo \"Exiting virtual environment...\"
+deactivate
+
+echo \"Cleaning up...\"
+unset temp_vars
+unset USER_SSH_PASSPHRASE
+rm -f \"\$tmp_vars\"
+rm -rf /\$HOME/postinstall.sh" >/mnt/home/$USERNAME/postinstall.sh
+chmod 755 /mnt/home/$USERNAME/postinstall.sh
 
 echo "Unmounting rootfs..."
 umount -R /mnt
+

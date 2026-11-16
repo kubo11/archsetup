@@ -19,4 +19,6 @@
       + : wheel : LOCAL
       + : {{ username }} : ALL
       + : greeter : greetd
+      + : greeter : systemd-user
       - : ALL : ALL
+

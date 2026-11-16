@@ -8,21 +8,11 @@
   ansible.builtin.include_tasks:
     file: pacman.yml
 
-- name: Check if yay is installed
-  ansible.builtin.stat:
-    path: /usr/bin/yay
-  register: yay_status
-
-- name: Install and configure yay
-  ansible.builtin.include_tasks:
-    file: yay.yml
-  when: not yay_status.stat.exists
-
-- name: Upgrade the system using yay, only act on AUR packages.
-  kewlfft.aur.aur:
-    upgrade: yes
-    use: yay
-    aur_only: yes
-  become: yes
-  become_user: aur_builder
+- name: Copy install-aur.sh 
+  ansible.builtin.copy:
+    src: install-aur.sh
+    dest: "/home/{{ username }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
 

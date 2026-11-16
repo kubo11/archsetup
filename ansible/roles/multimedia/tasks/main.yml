@@ -24,14 +24,6 @@
     state: present
   become: true
 
-#- name: Install tev
-#  kewlfft.aur.aur:
-#    name: tev
-#    use: yay
-#    state: present
-#  become: yes
-#  become_user: aur_builder
-
 - name: Install spotify
   community.general.pacman:
     name:
@@ -56,14 +48,6 @@
       - handbrake
     state: present
   become: true
-
-- name: Install makemkv
-  kewlfft.aur.aur:
-    name: makemkv
-    use: yay
-    state: present
-  become: yes
-  become_user: aur_builder
 
 - name: Install book software
   community.general.pacman:

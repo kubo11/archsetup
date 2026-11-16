@@ -1,15 +1,17 @@
-- name: Install copy/paste utilty
+- name: Install clipboard utilities
   community.general.pacman:
     name: 
       - wl-clipboard
+      - cliphist
     state: present
   become: true
 
-- name: Install clipboard manager
-  kewlfft.aur.aur:
-    name: clipvault
-    use: yay
-    state: present
-  become: yes
-  become_user: aur_builder
+- name: Copy cliphist rofi custom mode
+  ansible.builtin.copy:
+    src: cliphist-rofi-img
+    dest: "{{ cliphist_rofi_img_path }}"
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
 

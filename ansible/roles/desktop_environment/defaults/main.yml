@@ -10,4 +10,5 @@ wallpaper_dir: "/usr/share/backgrounds"
 wallpaper_path: "{{ wallpaper_dir }}/wallpaper.jpg"
 nordic_theme_url: https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz
 theme_dir: /usr/share/themes
+cliphist_rofi_img_path: /usr/local/bin/cliphist-rofi-img
 
